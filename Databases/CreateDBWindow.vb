@@ -1,4 +1,4 @@
-﻿Imports SalesInvoice.globalVars
+﻿Imports SalesInvoice.Utils
 Imports System.Data.SqlServerCe
 
 Public Class CreateDBWindow
@@ -12,20 +12,20 @@ Public Class CreateDBWindow
             Dim conTest = New SqlCeConnection("Data Source=""" & Application.StartupPath & "\databases\" & DATABASENAME.Text & ".sdf""")
             conTest.Open()
              If conTest.State = ConnectionState.Open Then
-                Dim cmdTest = New SqlCeCommand(DBobjects.getString("tableCategories"), conTest)
+                Dim cmdTest = New SqlCeCommand(Globals.DBobjects.getString("tableCategories"), conTest)
                 cmdTest.ExecuteNonQuery()
-                cmdTest = New SqlCeCommand(DBobjects.getString("tableClients"), conTest)
+                cmdTest = New SqlCeCommand(Globals.DBobjects.getString("tableClients"), conTest)
                 cmdTest.ExecuteNonQuery()
-                cmdTest = New SqlCeCommand(DBobjects.getString("tableItems"), conTest)
+                cmdTest = New SqlCeCommand(Globals.DBobjects.getString("tableItems"), conTest)
                 cmdTest.ExecuteNonQuery()
-                cmdTest = New SqlCeCommand(DBobjects.getString("tableReceipts"), conTest)
+                cmdTest = New SqlCeCommand(Globals.DBobjects.getString("tableReceipts"), conTest)
                 cmdTest.ExecuteNonQuery()
-                cmdTest = New SqlCeCommand(DBobjects.getString("tableReceipts_data"), conTest)
+                cmdTest = New SqlCeCommand(Globals.DBobjects.getString("tableReceipts_data"), conTest)
                 cmdTest.ExecuteNonQuery()
-                cmdTest = New SqlCeCommand(DBobjects.getString("table_units"), conTest)
+                cmdTest = New SqlCeCommand(Globals.DBobjects.getString("table_units"), conTest)
                 cmdTest.ExecuteNonQuery()
 
-                Dim query As String() = DBobjects.getString("table_alters").Split(New Char() {";"c})
+                Dim query As String() = Globals.DBobjects.getString("table_alters").Split(New Char() {";"c})
 
                 For Each w As String In query
                     If w.Length > 0 Then
@@ -34,7 +34,7 @@ Public Class CreateDBWindow
                     End If
                 Next
 
-                query = DBobjects.getString("tableUnits_data").Split(New Char() {";"c})
+                query = Globals.DBobjects.getString("tableUnits_data").Split(New Char() {";"c})
 
                 For Each w As String In query
                     If w.Length > 0 Then
@@ -45,7 +45,7 @@ Public Class CreateDBWindow
 
 
 
-                MessageBox.Show(rm.GetString("msgDatabaseCreatedSuccess"), _
+                MessageBox.Show(Globals.resManager.GetString("msgDatabaseCreatedSuccess"), _
                                "Info", MessageBoxButtons.OK, _
                                 MessageBoxIcon.Information)
                 conTest.Close()
@@ -67,10 +67,10 @@ Public Class CreateDBWindow
         setLanguage()
     End Sub
     Sub setLanguage()
-        btnCancel.Text = rm.GetString("lbCancel")
-        btnCreate.Text = rm.GetString("lbCreate")
-        lbName.Text = rm.GetString("lbItemName")
-        Me.Text = rm.GetString("lbCreateDB")
+        btnCancel.Text = Globals.resManager.GetString("lbCancel")
+        btnCreate.Text = Globals.resManager.GetString("lbCreate")
+        lbName.Text = Globals.resManager.GetString("lbItemName")
+        Me.Text = Globals.resManager.GetString("lbCreateDB")
         Me.Refresh()
     End Sub
 
@@ -80,7 +80,7 @@ Public Class CreateDBWindow
 
     End Sub
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles btnCancel.Click
-        If MsgBox(rm.GetString("lbAreYouSure"), MsgBoxStyle.OkCancel) = MsgBoxResult.Ok Then
+        If MsgBox(Globals.resManager.GetString("lbAreYouSure"), MsgBoxStyle.OkCancel) = MsgBoxResult.Ok Then
             Me.Dispose()
             Me.Close()
         End If

@@ -1,5 +1,5 @@
 ﻿Imports System.IO
-Imports SalesInvoice.globalVars
+Imports SalesInvoice.Utils
 Imports System.Configuration
 Imports System.Collections.Specialized
 Public Class ChooseDBWindow
@@ -15,7 +15,7 @@ Public Class ChooseDBWindow
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles btnOk.Click
         If cbSelectDb.SelectedItem IsNot Nothing Then
-            currentDatabase = cbSelectDb.SelectedItem
+            DatabaseHelper.currentDatabase = cbSelectDb.SelectedItem
             MainWindow.Show()
             Me.Close()
         End If
@@ -29,21 +29,21 @@ Public Class ChooseDBWindow
     Private Sub ChooseDBWindow_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         If Not File.Exists(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile) Then
             Dim rm = My.Resources.Language_pl.ResourceManager
-            MsgBox(rm.GetString("msgAppConfigError"))
+            MsgBox(Globals.resManager.GetString("msgAppConfigError"))
             Application.Exit()
         End If
-        reloadLanguage()
+        Globals.reloadLanguage()
         setLanguage()
         Me.CenterToScreen()
 
 
-        If asSettings.Settings.Item("firsttimerun").Value = "true" Then
+        If Globals.appSettings.Settings.Item("firsttimerun").Value = "true" Then
             FirstRunWizard.ShowDialog()
-            cAppConfig.Save(ConfigurationSaveMode.Modified)
+            Globals.cAppConfig.Save(ConfigurationSaveMode.Modified)
         End If
-        If asSettings.Settings.Item("autostart_database").Value IsNot "false" Then
-            If fileExists(Application.StartupPath & "\databases\" & asSettings.Settings.Item("autostart_database").Value) Then
-                currentDatabase = asSettings.Settings.Item("autostart_database").Value
+        If Globals.appSettings.Settings.Item("autostart_database").Value IsNot "false" Then
+            If Globals.fileExists(Application.StartupPath & "\databases\" & Globals.appSettings.Settings.Item("autostart_database").Value) Then
+                DatabaseHelper.currentDatabase = Globals.appSettings.Settings.Item("autostart_database").Value
                 MainWindow.Show()
                 Me.Close()
             End If
@@ -54,10 +54,10 @@ Public Class ChooseDBWindow
         btnOk.Select()
     End Sub
     Sub setLanguage()
-        btnNew.Text = rm.GetString("lbNew")
-        btnOk.Text = rm.GetString("lbOk")
-        lbDatabase.Text = rm.GetString("lbDatabase")
-        Me.Text = rm.GetString("lbSelectDB")
+        btnNew.Text = Globals.resManager.GetString("lbNew")
+        btnOk.Text = Globals.resManager.GetString("lbOk")
+        lbDatabase.Text = Globals.resManager.GetString("lbDatabase")
+        Me.Text = Globals.resManager.GetString("lbSelectDB")
         Me.Refresh()
     End Sub
 End Class

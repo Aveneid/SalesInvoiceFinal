@@ -1,12 +1,13 @@
 ﻿Imports System.Configuration
 Imports System.Collections.Specialized
 Imports System.Data.SqlServerCe
-Imports SalesInvoice.globalVars
 Imports System.Xml
 Imports System.Data.Odbc
+Imports System.Text.RegularExpressions
 Imports Spire.Doc
 Imports Spire.Doc.Document
-Imports System.Text.RegularExpressions
+
+Imports SalesInvoice.Utils
 
 Public Class AddReceiptWindow
     Dim receiptNo As String
@@ -22,19 +23,19 @@ Public Class AddReceiptWindow
                 docSrc = Application.StartupPath & "\resources\" & chooseTmp.cbTemplate.SelectedItem
                 Dim doc As New Document(docSrc)
 
-                doc.Replace(New Regex("{{SELLER_TITLE}}"), asSettings.Settings.Item("headlineInfo").Value)
-                doc.Replace(New Regex("{{SELLER_NAME}}"), asSettings.Settings.Item("sellerName").Value)
-                doc.Replace(New Regex("{{SELLER_ADDRESS1}}"), asSettings.Settings.Item("address").Value & " " & asSettings.Settings.Item("buildingNo").Value)
-                doc.Replace(New Regex("{{SELLER_ADDRESS2}}"), asSettings.Settings.Item("postalCode").Value & " " & asSettings.Settings.Item("city").Value)
-                doc.Replace(New Regex("{{SELLER_PHONE}}"), "tel." & asSettings.Settings.Item("phone").Value)
+                doc.Replace(New Regex("{{SELLER_TITLE}}"), Globals.appSettings.Settings.Item("headlineInfo").Value)
+                doc.Replace(New Regex("{{SELLER_NAME}}"), Globals.appSettings.Settings.Item("sellerName").Value)
+                doc.Replace(New Regex("{{SELLER_ADDRESS1}}"), Globals.appSettings.Settings.Item("address").Value & " " & Globals.appSettings.Settings.Item("buildingNo").Value)
+                doc.Replace(New Regex("{{SELLER_ADDRESS2}}"), Globals.appSettings.Settings.Item("postalCode").Value & " " & Globals.appSettings.Settings.Item("city").Value)
+                doc.Replace(New Regex("{{SELLER_PHONE}}"), "tel." & Globals.appSettings.Settings.Item("phone").Value)
 
                 doc.Replace(New Regex("{{RECEIPT_NO}}"), receiptNo)
                 doc.Replace(New Regex("{{DATE}}"), ReceiptDate.Value.Date)
 
-                cmd = New SqlCeCommand("SELECT TOP 1 * FROM clients where name = '" & BuyerCombo.Text & "'", con)
-                If con.State = ConnectionState.Closed Then con.Open()
-                cmd.ExecuteNonQuery()
-                Using rd As SqlCeDataReader = cmd.ExecuteReader
+                DatabaseHelper.cmd = New SqlCeCommand("SELECT TOP 1 * FROM clients where name = '" & BuyerCombo.Text & "'", DatabaseHelper.con)
+                If DatabaseHelper.con.State = ConnectionState.Closed Then DatabaseHelper.con.Open()
+                DatabaseHelper.cmd.ExecuteNonQuery()
+                Using rd As SqlCeDataReader = DatabaseHelper.cmd.ExecuteReader
                     If rd.Read() Then
                         Dim tmp = rd.GetValue(1)
                         If rd.GetValue(4).ToString.Length > 0 Then
@@ -91,14 +92,14 @@ Public Class AddReceiptWindow
 
 
                 doc.Replace(New Regex("{{SUM_ALL}}"), SumAll.Text)
-                doc.Replace(New Regex("{{FOOTER_TEXT}}"), asSettings.Settings.Item("footerText").Value)
+                doc.Replace(New Regex("{{FOOTER_TEXT}}"), Globals.appSettings.Settings.Item("footerText").Value)
 
                 '  Try
                 'doc.SaveToFile("receipts/" & receiptNo.Replace("/", "_") & ".pdf", FileFormat.PDF)
-                filename = "receipts/" & receiptNo.Replace("/", "_") & "_" & currentDatabase & ".pdf"
+                filename = "receipts/" & receiptNo.Replace("/", "_") & "_" & DatabaseHelper.currentDatabase & ".pdf"
                 doc.SaveToFile(filename, FileFormat.PDF)
                 ' Catch ex As Exception
-                'MsgBox(rm.GetString("msgFileError"))
+                'MsgBox(Globals.resManager.GetString("msgFileError"))
                 ' End Try
             Else
                 cancelled = True
@@ -107,12 +108,12 @@ Public Class AddReceiptWindow
         End Using
     End Sub
     Sub updateData()
-        cmd = New SqlCeCommand("Select name FROM clients", con)
-        If con.State = ConnectionState.Closed Then con.Open()
-        myDA = New SqlCeDataAdapter(cmd)
-        myDataSet = New DataSet()
-        myDA.Fill(myDataSet, "clients")
-        BuyerCombo.DataSource = myDataSet.Tables(0)
+        DatabaseHelper.cmd = New SqlCeCommand("Select name FROM clients", DatabaseHelper.con)
+        If DatabaseHelper.con.State = ConnectionState.Closed Then DatabaseHelper.con.Open()
+        DatabaseHelper.myDA = New SqlCeDataAdapter(DatabaseHelper.cmd)
+        DatabaseHelper.myDataSet = New DataSet()
+        DatabaseHelper.myDA.Fill(DatabaseHelper.myDataSet, "clients")
+        BuyerCombo.DataSource = DatabaseHelper.myDataSet.Tables(0)
         BuyerCombo.ValueMember = "name"
         BuyerCombo.DisplayMember = "name"
         ReceiptDate.Format = DateTimePickerFormat.Custom
@@ -132,35 +133,35 @@ Public Class AddReceiptWindow
         'ReceiptDate.Format = "MM/dd/yyyy"
         Dim count = 0
 
-        cmd = New SqlCeCommand("Select count(id) FROM receipts WHERE ddate BETWEEN " &
+        DatabaseHelper.cmd = New SqlCeCommand("Select count(id) FROM receipts WHERE ddate BETWEEN " &
                                 "'" & starting.ToString("yyyy/MM/dd").Replace("-", "/") & "' AND " &
-                                "'" & ending.ToString("yyyy/MM/dd").Replace("-", "/") & "'", con)
-        If con.State = ConnectionState.Closed Then con.Open()
-        cmd.ExecuteNonQuery()
-        Using rd As SqlCeDataReader = cmd.ExecuteReader
+                                "'" & ending.ToString("yyyy/MM/dd").Replace("-", "/") & "'", DatabaseHelper.con)
+        If DatabaseHelper.con.State = ConnectionState.Closed Then DatabaseHelper.con.Open()
+        DatabaseHelper.cmd.ExecuteNonQuery()
+        Using rd As SqlCeDataReader = DatabaseHelper.cmd.ExecuteReader
             If rd.Read() Then count = rd.GetValue(0)
         End Using
         receiptNo = count + 1 & "/" & MonthName(now.Month).Substring(0, 3) & "/" & now.Year()
         lbReceiptNoVal.Text = receiptNo
     End Sub
     Sub setLanguage()
-        lbClient.Text = rm.GetString("lbClient")
-        lbReceiptNo.Text = rm.GetString("lbReceiptNO")
-        lbSummary.Text = rm.GetString("lbSum")
+        lbClient.Text = Globals.resManager.GetString("lbClient")
+        lbReceiptNo.Text = Globals.resManager.GetString("lbReceiptNO")
+        lbSummary.Text = Globals.resManager.GetString("lbSum")
 
-        btnGenerate.Text = rm.GetString("lbGenerate")
-        btnNew.Text = rm.GetString("lbNew")
-        btnSave.Text = rm.GetString("lbSave")
+        btnGenerate.Text = Globals.resManager.GetString("lbGenerate")
+        btnNew.Text = Globals.resManager.GetString("lbNew")
+        btnSave.Text = Globals.resManager.GetString("lbSave")
 
 
-        ItemsInReceipt.Columns(0).HeaderText = rm.GetString("lbCode")
-        ItemsInReceipt.Columns(1).HeaderText = rm.GetString("lbItem")
-        ItemsInReceipt.Columns(2).HeaderText = rm.GetString("lbAmount")
-        ItemsInReceipt.Columns(3).HeaderText = rm.GetString("lbUnit")
-        ItemsInReceipt.Columns(4).HeaderText = rm.GetString("lbCost")
-        ItemsInReceipt.Columns(5).HeaderText = rm.GetString("lbSum")
+        ItemsInReceipt.Columns(0).HeaderText = Globals.resManager.GetString("lbCode")
+        ItemsInReceipt.Columns(1).HeaderText = Globals.resManager.GetString("lbItem")
+        ItemsInReceipt.Columns(2).HeaderText = Globals.resManager.GetString("lbAmount")
+        ItemsInReceipt.Columns(3).HeaderText = Globals.resManager.GetString("lbUnit")
+        ItemsInReceipt.Columns(4).HeaderText = Globals.resManager.GetString("lbCost")
+        ItemsInReceipt.Columns(5).HeaderText = Globals.resManager.GetString("lbSum")
 
-        Me.Text = rm.GetString("lbNewReceipt")
+        Me.Text = Globals.resManager.GetString("lbNewReceipt")
 
 
         'ItemsInReceipt.Columns(2).DefaultCellStyle.NullValue = "1.00"
@@ -173,20 +174,20 @@ Public Class AddReceiptWindow
     Private Sub Form3_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
         ItemsInReceipt.SelectAll()
         ItemsInReceipt.Rows.Clear()
-        con.Close()
+        DatabaseHelper.con.Close()
     End Sub
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles btnGenerate.Click
         If ItemsInReceipt.Rows(0).Cells(0).Value IsNot Nothing Then
             cancelled = False
         End If
         savetoDB()
-            generateReceiptPrint()
-            If cancelled = False Then
-                Dim print As New PrintingWindow
-                print.PdfViewer1.LoadFromFile((Application.StartupPath & "/" & filename))
-                print.ShowDialog()
-            End If
-            Me.Close()
+        generateReceiptPrint()
+        If cancelled = False Then
+            Dim print As New PrintingWindow
+            print.PdfViewer1.LoadFromFile((Application.StartupPath & "/" & filename))
+            print.ShowDialog()
+        End If
+        Me.Close()
     End Sub
 
     Private Sub AddClientBtn(sender As Object, e As EventArgs) Handles btnNew.Click
@@ -199,11 +200,11 @@ Public Class AddReceiptWindow
         Dim da As New SqlCeDataAdapter
         Try
 
-            If con.State = ConnectionState.Closed Then con.Open()
+            If DatabaseHelper.con.State = ConnectionState.Closed Then DatabaseHelper.con.Open()
 
-            cmd = New SqlCeCommand("Select * FROM items where name Like '%" & ItemsInReceipt.CurrentCell.Value & "%' ORDER BY name ASC", con)
-            da.SelectCommand = cmd
-            ' MsgBox(cmd.CommandText)
+            DatabaseHelper.cmd = New SqlCeCommand("Select * FROM items where name Like '%" & ItemsInReceipt.CurrentCell.Value & "%' ORDER BY name ASC", DatabaseHelper.con)
+            da.SelectCommand = DatabaseHelper.cmd
+            ' MsgBox(DatabaseHelper.cmd.CommandText)
             da.Fill(dt)
             Dim r As DataRow
             Dim ac As New AutoCompleteStringCollection()
@@ -230,18 +231,18 @@ Public Class AddReceiptWindow
         End If
     End Sub
     Sub savetoDB() 'TODO
-        If con.State = ConnectionState.Closed Then con.Open()
-        cmd = New SqlCeCommand("Select top 1 id FROM clients where name ='" & BuyerCombo.Text & "'", con)
-        cmd.ExecuteNonQuery()
+        If DatabaseHelper.con.State = ConnectionState.Closed Then DatabaseHelper.con.Open()
+        DatabaseHelper.cmd = New SqlCeCommand("Select top 1 id FROM clients where name ='" & BuyerCombo.Text & "'", DatabaseHelper.con)
+        DatabaseHelper.cmd.ExecuteNonQuery()
         Dim clientID = ""
-        Using rd As SqlCeDataReader = cmd.ExecuteReader()
+        Using rd As SqlCeDataReader = DatabaseHelper.cmd.ExecuteReader()
             If rd.Read() Then
                 clientID = rd.GetValue(0)
             End If
         End Using
-        cmd = New SqlCeCommand("INSERT receipts(client_id,receipt_id,ddate) values(" &
-            clientID & ",'" & receiptNo & "','" & ReceiptDate.Value.ToString("MM/dd/yyyy") & "')", con)
-        cmd.ExecuteNonQuery()
+        DatabaseHelper.cmd = New SqlCeCommand("INSERT receipts(client_id,receipt_id,ddate) values(" &
+            clientID & ",'" & receiptNo & "','" & ReceiptDate.Value.ToString("MM/dd/yyyy") & "')", DatabaseHelper.con)
+        DatabaseHelper.cmd.ExecuteNonQuery()
         Dim s As DataGridViewRow
         If ItemsInReceipt.Rows.Count > 0 Then
             For Each s In ItemsInReceipt.Rows
@@ -249,9 +250,9 @@ Public Class AddReceiptWindow
                     If Not s.IsNewRow Then
                         If s.Cells.Item(1).Value.ToString.Length > 0 Then
                             ' MsgBox(s.Cells.Item(1).Value.ToString)
-                            cmd = New SqlCeCommand("INSERT receipts_data(receipt_id,amount,code) values('" &
-                                                   receiptNo & "'," & s.Cells(2).Value & "," & s.Cells(0).Value & ")", con)
-                            cmd.ExecuteNonQuery()
+                            DatabaseHelper.cmd = New SqlCeCommand("INSERT receipts_data(receipt_id,amount,code) values('" &
+                                                   receiptNo & "'," & s.Cells(2).Value & "," & s.Cells(0).Value & ")", DatabaseHelper.con)
+                            DatabaseHelper.cmd.ExecuteNonQuery()
                         End If
                     End If
                 Catch ex As Exception
@@ -282,7 +283,7 @@ Public Class AddReceiptWindow
         '        Dim da As New SqlCeDataAdapter
         '        Dim dt As New DataTable
         '        Dim r As DataRow
-        '        cmd = New SqlCeCommand("Select name FROM items where id like " & e.Value & " ORDER BY name DESC", con)
+        '        DatabaseHelper.cmd = New SqlCeCommand("Select name FROM items where id like " & e.Value & " ORDER BY name DESC", con)
         '        'AUTOCOMPLETE
 
         '        'da.SelectCommand = cmd
@@ -349,12 +350,12 @@ Public Class AddReceiptWindow
 
 
         If e.ColumnIndex = 1 Then
-            cmd = New SqlCeCommand("SELECT items.id, items.price, units.name " &
+            DatabaseHelper.cmd = New SqlCeCommand("SELECT items.id, items.price, units.name " &
                                    "FROM items INNER JOIN units ON items.unit = units.id " &
-                                   "WHERE items.name = '" & ItemsInReceipt.Rows(e.RowIndex).Cells(1).Value & "'", con)
-            If con.State = ConnectionState.Closed Then con.Open()
-            cmd.ExecuteNonQuery()
-            Using rd As SqlCeDataReader = cmd.ExecuteReader
+                                   "WHERE items.name = '" & ItemsInReceipt.Rows(e.RowIndex).Cells(1).Value & "'", DatabaseHelper.con)
+            If DatabaseHelper.con.State = ConnectionState.Closed Then DatabaseHelper.con.Open()
+            DatabaseHelper.cmd.ExecuteNonQuery()
+            Using rd As SqlCeDataReader = DatabaseHelper.cmd.ExecuteReader
                 If rd.Read() Then ' check if item is in db
                     ItemsInReceipt.Rows(e.RowIndex).Cells(0).Value = rd.GetValue(0) ' code
                     ItemsInReceipt.Rows(e.RowIndex).Cells(4).Value = rd.GetValue(1) ' value
@@ -363,9 +364,9 @@ Public Class AddReceiptWindow
                     ItemsInReceipt.Rows(e.RowIndex).Cells(5).Value = rd.GetValue(1)
                     ' ItemsInReceipt.CurrentCell = ItemsInReceipt.Rows(e.RowIndex - 1).Cells(2)
                 Else 'if not add it with defaults
-                    cmd2 = New SqlCeCommand("INSERT INTO items (name, category, unit, price) " &
-                                            "VALUES ('" & ItemsInReceipt.Rows(e.RowIndex).Cells(1).Value & "', 1, 1, 0)", con)
-                    cmd2.ExecuteNonQuery()
+                    DatabaseHelper.cmd2 = New SqlCeCommand("INSERT INTO items (name, category, unit, price) " &
+                                            "VALUES ('" & ItemsInReceipt.Rows(e.RowIndex).Cells(1).Value & "', 1, 1, 0)", DatabaseHelper.con)
+                    DatabaseHelper.cmd2.ExecuteNonQuery()
 
                 End If
             End Using
@@ -383,7 +384,7 @@ Public Class AddReceiptWindow
         SumAll.Text = Format(sumAllValue, "0.00")
 
 
-        con.Close()
+        DatabaseHelper.con.Close()
     End Sub
 
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
@@ -399,10 +400,10 @@ Public Class AddReceiptWindow
     End Sub
 
     Private Sub BuyerCombo_SelectedIndexChanged(sender As Object, e As EventArgs) Handles BuyerCombo.SelectedIndexChanged
-        cmd = New SqlCeCommand("SELECT TOP 1 * FROM clients where name = '" & BuyerCombo.Text & "'", con)
-        If con.State = ConnectionState.Closed Then con.Open()
-        cmd.ExecuteNonQuery()
-        Using rd As SqlCeDataReader = cmd.ExecuteReader
+        DatabaseHelper.cmd = New SqlCeCommand("SELECT TOP 1 * FROM clients where name = '" & BuyerCombo.Text & "'", DatabaseHelper.con)
+        If DatabaseHelper.con.State = ConnectionState.Closed Then DatabaseHelper.con.Open()
+        DatabaseHelper.cmd.ExecuteNonQuery()
+        Using rd As SqlCeDataReader = DatabaseHelper.cmd.ExecuteReader
             If rd.Read() Then
                 buyerToolTip = rd.GetValue(1) & vbNewLine
                 Dim buyerAddress = rd.GetValue(3).ToString.Split(vbLf)

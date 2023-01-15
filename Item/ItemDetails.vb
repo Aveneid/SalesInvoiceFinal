@@ -1,4 +1,4 @@
-﻿Imports SalesInvoice.globalVars
+﻿Imports SalesInvoice.Utils
 Imports System.Data.SqlServerCe
 Public Class ItemDetails
     Dim AitemCode As String
@@ -6,14 +6,14 @@ Public Class ItemDetails
     Dim AitemName As String = ""
     Dim categoryID As Integer = 0
     Sub setlanguage()
-        lbCategory.Text = rm.GetString("lbCategory")
-        lbCode.Text = rm.GetString("lbCode")
-        lbName.Text = rm.GetString("lbItemName")
-        lbPrice.Text = rm.GetString("lbPrice")
-        lbUnit.Text = rm.GetString("lbUnit")
-        btnClose.Text = rm.GetString("lbClose")
-        lbCategoryEdit.Text = rm.GetString("lbEdit")
-        Me.Text = rm.GetString("lbItemDetails")
+        lbCategory.Text = Globals.resManager.GetString("lbCategory")
+        lbCode.Text = Globals.resManager.GetString("lbCode")
+        lbName.Text = Globals.resManager.GetString("lbItemName")
+        lbPrice.Text = Globals.resManager.GetString("lbPrice")
+        lbUnit.Text = Globals.resManager.GetString("lbUnit")
+        btnClose.Text = Globals.resManager.GetString("lbClose")
+        lbCategoryEdit.Text = Globals.resManager.GetString("lbEdit")
+        Me.Text = Globals.resManager.GetString("lbItemDetails")
     End Sub
     Private Sub ItemDetails_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         setlanguage()
@@ -22,30 +22,30 @@ Public Class ItemDetails
         itemCategory.Items.Clear()
         itemUnit.Enabled = False
         itemCategory.Enabled = False
-        If con.State = ConnectionState.Closed Then con.Open()
-        cmd = New SqlCeCommand("select name from Units", con)
-        cmd.ExecuteNonQuery()
-        Using rd As SqlCeDataReader = cmd.ExecuteReader
+        If DatabaseHelper.con.State = ConnectionState.Closed Then DatabaseHelper.con.Open()
+        DatabaseHelper.cmd = New SqlCeCommand("select name from Units", DatabaseHelper.con)
+        DatabaseHelper.cmd.ExecuteNonQuery()
+        Using rd As SqlCeDataReader = DatabaseHelper.cmd.ExecuteReader
             While rd.Read()
                 itemUnit.Items.Add(rd.GetValue(0))
             End While
         End Using
 
-        cmd = New SqlCeCommand("select name from Categories", con)
-        cmd.ExecuteNonQuery()
-        Using rd As SqlCeDataReader = cmd.ExecuteReader
+        DatabaseHelper.cmd = New SqlCeCommand("select name from Categories", DatabaseHelper.con)
+        DatabaseHelper.cmd.ExecuteNonQuery()
+        Using rd As SqlCeDataReader = DatabaseHelper.cmd.ExecuteReader
             While rd.Read()
                 itemCategory.Items.Add(rd.GetValue(0))
             End While
         End Using
 
-        cmd = New SqlCeCommand("select Items.name,Items.id,Items.price,Categories.name,Units.name " &
+        DatabaseHelper.cmd = New SqlCeCommand("select Items.name,Items.id,Items.price,Categories.name,Units.name " &
                                "from items inner join Categories on category = Categories.id " &
-                               "inner join units on unit = Units.id where Items.id = '" & AitemCode & "'", con)
+                               "inner join units on unit = Units.id where Items.id = '" & AitemCode & "'", DatabaseHelper.con)
 
-        If con.State = ConnectionState.Closed Then con.Open()
-        cmd.ExecuteNonQuery()
-        Using rd As SqlCeDataReader = cmd.ExecuteReader()
+        If DatabaseHelper.con.State = ConnectionState.Closed Then DatabaseHelper.con.Open()
+        DatabaseHelper.cmd.ExecuteNonQuery()
+        Using rd As SqlCeDataReader = DatabaseHelper.cmd.ExecuteReader()
             While rd.Read()
                 itemName.Text = rd.GetValue(0)
                 AitemName = rd.GetValue(0)
@@ -66,22 +66,22 @@ Public Class ItemDetails
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles btnClose.Click
         If Not AitemPrice = itemPrice.Text Then
-            If con.State = ConnectionState.Closed Then con.Open()
-            cmd = New SqlCeCommand("update items set price = " & itemPrice.Text &
-                              " WHERE id = '" & itemCode.Text & "'", con)
-            cmd.ExecuteNonQuery()
+            If DatabaseHelper.con.State = ConnectionState.Closed Then DatabaseHelper.con.Open()
+            DatabaseHelper.cmd = New SqlCeCommand("update items set price = " & itemPrice.Text &
+                              " WHERE id = '" & itemCode.Text & "'", DatabaseHelper.con)
+            DatabaseHelper.cmd.ExecuteNonQuery()
         End If
         If categoryID > 0 Then
-            If con.State = ConnectionState.Closed Then con.Open()
-            cmd = New SqlCeCommand("update items set category = " & categoryID &
-                              " WHERE id = '" & itemCode.Text & "'", con)
-            cmd.ExecuteNonQuery()
+            If DatabaseHelper.con.State = ConnectionState.Closed Then DatabaseHelper.con.Open()
+            DatabaseHelper.cmd = New SqlCeCommand("update items set category = " & categoryID &
+                              " WHERE id = '" & itemCode.Text & "'", DatabaseHelper.con)
+            DatabaseHelper.cmd.ExecuteNonQuery()
         End If
         If AitemName <> itemName.Text Then
-            If con.State = ConnectionState.Closed Then con.Open()
-            cmd = New SqlCeCommand("update items set name = " & itemName.Text &
-                              " WHERE id = '" & itemCode.Text & "'", con)
-            cmd.ExecuteNonQuery()
+            If DatabaseHelper.con.State = ConnectionState.Closed Then DatabaseHelper.con.Open()
+            DatabaseHelper.cmd = New SqlCeCommand("update items set name = " & itemName.Text &
+                              " WHERE id = '" & itemCode.Text & "'", DatabaseHelper.con)
+            DatabaseHelper.cmd.ExecuteNonQuery()
 
         End If
         MainWindow.updateDataView()
@@ -112,14 +112,14 @@ Public Class ItemDetails
     Private Sub categoryEdit_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) Handles lbCategoryEdit.LinkClicked
         Dim editCat = New EditCategory()
         If DialogResult.OK = editCat.ShowDialog() Then
-            If con.State = ConnectionState.Closed Then con.Open()
-            Dim cmd = New SqlCeCommand("SELECT id FROM categories WHERE name ='" & editCat.cbCategories.SelectedItem & "'", con)
-            cmd.ExecuteNonQuery()
-            Dim rd As SqlCeDataReader = cmd.ExecuteReader
+            If DatabaseHelper.con.State = ConnectionState.Closed Then DatabaseHelper.con.Open()
+            Dim cmd = New SqlCeCommand("SELECT id FROM categories WHERE name ='" & editCat.cbCategories.SelectedItem & "'", DatabaseHelper.con)
+            DatabaseHelper.cmd.ExecuteNonQuery()
+            Dim rd As SqlCeDataReader = DatabaseHelper.cmd.ExecuteReader
             rd.Read()
             categoryID = rd.GetValue(0)
             itemCategory.SelectedItem = editCat.cbCategories.SelectedItem
-            con.Close()
+            DatabaseHelper.con.Close()
         End If
     End Sub
 End Class

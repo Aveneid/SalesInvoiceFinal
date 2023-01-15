@@ -1,30 +1,30 @@
 ﻿Imports System.Data.SqlServerCe
-Imports SalesInvoice.globalVars
+Imports SalesInvoice.Utils
 Public Class AddClientWindow
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles btnAdd.Click
         If NAMEDATA.Text.Length > 0 And ADDRESSDATA.Text.Length > 0 Then
 
-            If con.State = ConnectionState.Closed Then con.Open()
+            If DatabaseHelper.con.State = ConnectionState.Closed Then DatabaseHelper.con.Open()
 
-            cmd = New SqlCeCommand("SELECT * FROM clients WHERE identificator = '" & NIPDATA.Text.Replace("-", "") & "' or name = '" & NAMEDATA.Text & "'", con)
+            DatabaseHelper.cmd = New SqlCeCommand("SELECT * FROM clients WHERE identificator = '" & NIPDATA.Text.Replace("-", "") & "' or name = '" & NAMEDATA.Text & "'", DatabaseHelper.con)
 
-            cmd.ExecuteNonQuery()
-            Dim d As SqlCeDataReader = cmd.ExecuteReader
+            DatabaseHelper.cmd.ExecuteNonQuery()
+            Dim d As SqlCeDataReader = DatabaseHelper.cmd.ExecuteReader
             If Not d.Read() Then
                 Dim persondata As String
                 If PESELRADIO.Checked Then persondata = PESELDATA.Text
                 If NIPRADIO.Checked Then persondata = NIPDATA.Text
                 If NOTHINGRADIO.Checked Then persondata = 0
-                cmd = New SqlCeCommand("INSERT clients(name,phone,identificator,address) values('" & NAMEDATA.Text & "','" & IIf(PHONEDATA.Text.Length < 1, "0", PHONEDATA.Text) & "','" & persondata & "','" & ADDRESSDATA.Text & "');", con)
-                If con.State = ConnectionState.Closed Then con.Open()
-                cmd.ExecuteNonQuery()
-                con.Close()
+                DatabaseHelper.cmd = New SqlCeCommand("INSERT clients(name,phone,identificator,address) values('" & NAMEDATA.Text & "','" & IIf(PHONEDATA.Text.Length < 1, "0", PHONEDATA.Text) & "','" & persondata & "','" & ADDRESSDATA.Text & "');", DatabaseHelper.con)
+                If DatabaseHelper.con.State = ConnectionState.Closed Then DatabaseHelper.con.Open()
+                DatabaseHelper.cmd.ExecuteNonQuery()
+                DatabaseHelper.con.Close()
                 Me.Close()
             Else
                 MsgBox("Client already in database!")
             End If
         Else
-            MsgBox(rm.GetString("msgNnotEnoughData"))
+            MsgBox(Globals.resManager.GetString("msgNnotEnoughData"))
         End If
 
     End Sub
@@ -35,7 +35,7 @@ Public Class AddClientWindow
     End Sub
 
     Private Sub Form2_FormClosed(ByVal sender As System.Object, ByVal e As System.Windows.Forms.FormClosedEventArgs) Handles MyBase.FormClosed
-        If con.State = ConnectionState.Open Then con.Close()
+        If DatabaseHelper.con.State = ConnectionState.Open Then DatabaseHelper.con.Close()
         Me.Dispose()
         Me.ResetText()
         Me.KeyPreview = False
@@ -48,12 +48,12 @@ Public Class AddClientWindow
         setLanguage()
     End Sub
     Sub setLanguage()
-        lbAddress.Text = rm.GetString("lbAddress")
-        lbDownloadGUS.Text = rm.GetString("lbDataFromCEIDG")
-        lbName.Text = rm.GetString("lbItemName")
-        lbPhone.Text = rm.GetString("lbPhone")
-        btnAdd.Text = rm.GetString("lbAdd")
-        Me.Text = rm.GetString("lbAddClient")
+        lbAddress.Text = Globals.resManager.GetString("lbAddress")
+        lbDownloadGUS.Text = Globals.resManager.GetString("lbDataFromCEIDG")
+        lbName.Text = Globals.resManager.GetString("lbItemName")
+        lbPhone.Text = Globals.resManager.GetString("lbPhone")
+        btnAdd.Text = Globals.resManager.GetString("lbAdd")
+        Me.Text = Globals.resManager.GetString("lbAddClient")
     End Sub
 
 

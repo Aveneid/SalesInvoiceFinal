@@ -1,5 +1,5 @@
 ﻿Imports System.Windows.Forms
-Imports SalesInvoice.globalVars
+Imports SalesInvoice.Utils
 Public Class ReportsRange
 
     Private Sub OK_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OK_Button.Click
@@ -13,10 +13,10 @@ Public Class ReportsRange
     End Sub
 
     Private Sub ReportsRange_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Me.Text = rm.GetString("lbPickRange")
+        Me.Text = Globals.resManager.GetString("lbPickRange")
         MonthCalendar1.TodayDate = Date.Now
 
-        lbPickRange.Text = rm.GetString("lbPickRange")
+        lbPickRange.Text = Globals.resManager.GetString("lbPickRange")
         MonthCalendar1.MaxDate = Date.Now.AddDays(1)
     End Sub
 End Class

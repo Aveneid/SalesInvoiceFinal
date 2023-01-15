@@ -1,4 +1,5 @@
-﻿Imports SalesInvoice.globalVars
+﻿Imports SalesInvoice.Utils
+
 Imports System.Data.SqlServerCe
 Imports System.IO
 Imports System.IO.Compression
@@ -14,7 +15,7 @@ Public Class OptionsAndDatabaseWindow
     Private Sub CreateDB(sender As Object, e As EventArgs) Handles btnCreateDb.Click
         Try
             If TextBox1.Text IsNot "" Then
-                If Not fileExists(Application.StartupPath & "\databases\" & TextBox1.Text) Then
+                If Not Globals.fileExists(Application.StartupPath & "\databases\" & TextBox1.Text) Then
                     Dim connectionString = "Data Source=""" & Application.StartupPath & "\databases\" & TextBox1.Text & ".sdf"""
 
                     Dim en = New SqlCeEngine(connectionString)
@@ -25,28 +26,20 @@ Public Class OptionsAndDatabaseWindow
 
                     conTest.Open()
                     If conTest.State = ConnectionState.Open Then
-                        Dim cmdTest = New SqlCeCommand(DBobjects.getString("tableCategories"), conTest)
+                        Dim cmdTest = New SqlCeCommand(Globals.DBobjects.getString("tableCategories"), conTest)
                         cmdTest.ExecuteNonQuery()
-                        cmdTest = New SqlCeCommand(DBobjects.getString("tableClients"), conTest)
+                        cmdTest = New SqlCeCommand(Globals.DBobjects.getString("tableClients"), conTest)
                         cmdTest.ExecuteNonQuery()
-                        cmdTest = New SqlCeCommand(DBobjects.getString("tableItems"), conTest)
+                        cmdTest = New SqlCeCommand(Globals.DBobjects.getString("tableItems"), conTest)
                         cmdTest.ExecuteNonQuery()
-                        cmdTest = New SqlCeCommand(DBobjects.getString("tableReceipts"), conTest)
+                        cmdTest = New SqlCeCommand(Globals.DBobjects.getString("tableReceipts"), conTest)
                         cmdTest.ExecuteNonQuery()
-                        cmdTest = New SqlCeCommand(DBobjects.getString("tableReceipts_data"), conTest)
+                        cmdTest = New SqlCeCommand(Globals.DBobjects.getString("tableReceipts_data"), conTest)
                         cmdTest.ExecuteNonQuery()
-                        cmdTest = New SqlCeCommand(DBobjects.getString("table_units"), conTest)
+                        cmdTest = New SqlCeCommand(Globals.DBobjects.getString("table_units"), conTest)
                         cmdTest.ExecuteNonQuery()
 
-                        Dim query As String() = DBobjects.getString("table_alters").Split(New Char() {";"c})
-
-                        For Each w As String In query
-                            If w.Length > 0 Then
-                                cmdTest = New SqlCeCommand(w, conTest)
-                                cmdTest.ExecuteNonQuery()
-                            End If
-                        Next
-                        query = DBobjects.getString("tableUnits_data").Split(New Char() {";"c})
+                        Dim query As String() = Globals.DBobjects.getString("table_alters").Split(New Char() {";"c})
 
                         For Each w As String In query
                             If w.Length > 0 Then
@@ -54,15 +47,23 @@ Public Class OptionsAndDatabaseWindow
                                 cmdTest.ExecuteNonQuery()
                             End If
                         Next
+                        query = Globals.DBobjects.getString("tableUnits_data").Split(New Char() {";"c})
 
-                        MessageBox.Show(rm.GetString("msgDatabaseCreatedSuccess"),
+                        For Each w As String In query
+                            If w.Length > 0 Then
+                                cmdTest = New SqlCeCommand(w, conTest)
+                                cmdTest.ExecuteNonQuery()
+                            End If
+                        Next
+
+                        MessageBox.Show(Globals.resManager.GetString("msgDatabaseCreatedSuccess"),
                                        "Info", MessageBoxButtons.OK,
                                         MessageBoxIcon.Information)
                         updateData()
                         conTest.Close()
                     End If
                 Else
-                    MsgBox(rm.GetString("msgDatabaseNameExists"))
+                    MsgBox(Globals.resManager.GetString("msgDatabaseNameExists"))
                 End If
             End If
         Catch ex As Exception
@@ -89,7 +90,7 @@ Public Class OptionsAndDatabaseWindow
 
 
         cbTemplate.Items.Clear()
-        cbTemplate.Items.Add(rm.GetString("lbChoose"))
+        cbTemplate.Items.Add(Globals.resManager.GetString("lbChoose"))
 
         files = Directory.GetFiles(Application.StartupPath & "\Resources", "*.doc", SearchOption.TopDirectoryOnly)
         For Each FileName As String In files
@@ -97,9 +98,9 @@ Public Class OptionsAndDatabaseWindow
         Next
         cbTemplate.SelectedIndex = 1
         If cbTemplate.Items.Count > 1 Then
-            If asSettings.Settings("defaultPrintTemplate").Value <> "none" Then
-                If cbTemplate.FindString(asSettings.Settings("defaultPrintTemplate").Value) > -1 Then
-                    cbTemplate.SelectedIndex = cbTemplate.FindStringExact(asSettings.Settings("defaultPrintTemplate").Value)
+            If Globals.appSettings.Settings("defaultPrintTemplate").Value <> "none" Then
+                If cbTemplate.FindString(Globals.appSettings.Settings("defaultPrintTemplate").Value) > -1 Then
+                    cbTemplate.SelectedIndex = cbTemplate.FindStringExact(Globals.appSettings.Settings("defaultPrintTemplate").Value)
                 End If
             End If
         End If
@@ -117,42 +118,42 @@ Public Class OptionsAndDatabaseWindow
         TabCleaning.Visible = False
         TabControl1.TabPages.Remove(TabCleaning)
         cbSelectLanguage.SelectedIndex = 0
-        If asSettings.Settings.Item("lang") Is "pl-PL" Then
+        If Globals.appSettings.Settings.Item("lang") Is "pl-PL" Then
             cbSelectLanguage.SelectedIndex = 0
-        ElseIf asSettings.Settings.Item("lang") Is "en-US" Then
+        ElseIf Globals.appSettings.Settings.Item("lang") Is "en-US" Then
             cbSelectLanguage.SelectedIndex = 1
         End If
 
     End Sub
 
     Private Sub Confirm(sender As Object, e As EventArgs) Handles btnOk.Click
-        currentDatabase = cbDbNameSelect.SelectedItem
-        globalVars.UpdateConnectionString(currentDatabase)
+        DatabaseHelper.currentDatabase = cbDbNameSelect.SelectedItem
+        DatabaseHelper.updateConnectionString(DatabaseHelper.currentDatabase)
         MainWindow.setLanguage()
         Me.Close()
     End Sub
 
     Private Sub CloseAndSave(sender As Object, e As EventArgs) Handles btnClose.Click
         If chkSetDefault.Checked Then
-            asSettings.Settings.Item("autostart_database").Value = cbDbNameSelect.SelectedItem
+            Globals.appSettings.Settings.Item("autostart_database").Value = cbDbNameSelect.SelectedItem
         End If
-        If cbTemplate.SelectedItem <> rm.GetString("lbChoose") Then
-            asSettings.Settings("defaultPrintTemplate").Value = cbTemplate.SelectedItem
+        If cbTemplate.SelectedItem <> Globals.resManager.GetString("lbChoose") Then
+            Globals.appSettings.Settings("defaultPrintTemplate").Value = cbTemplate.SelectedItem
         Else
-            asSettings.Settings("defaultPrintTemplate").Value = "none"
+            Globals.appSettings.Settings("defaultPrintTemplate").Value = "none"
         End If
-        cAppConfig.Save(ConfigurationSaveMode.Modified)
+        Globals.cAppConfig.Save(ConfigurationSaveMode.Modified)
         Me.Close()
     End Sub
 
     Private Sub DeleteDB(sender As Object, e As EventArgs) Handles btnDeleteDB.Click
         Dim answer As DialogResult
-        answer = MessageBox.Show(rm.GetString("msgSureToDeleteX") & cbSelectDbName2.SelectedItem.ToString, rm.GetString("msgConfirmation"), MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+        answer = MessageBox.Show(Globals.resManager.GetString("msgSureToDeleteX") & cbSelectDbName2.SelectedItem.ToString, Globals.resManager.GetString("msgConfirmation"), MessageBoxButtons.YesNo, MessageBoxIcon.Question)
         If answer = vbYes Then
-            If currentDatabase = cbSelectDbName2.SelectedItem.ToString Then
-                MsgBox(rm.GetString("msgDatabaseInUseError"))
+            If DatabaseHelper.currentDatabase = cbSelectDbName2.SelectedItem.ToString Then
+                MsgBox(Globals.resManager.GetString("msgDatabaseInUseError"))
             Else
-                globalVars.con.Close()
+                DatabaseHelper.con.Close()
                 MainWindow.MainGridView.DataSource = Nothing
                 MainWindow.MainGridView.Rows.Clear()
                 My.Computer.FileSystem.DeleteFile(Application.StartupPath & "\databases\" & cbSelectDbName2.SelectedItem.ToString)
@@ -170,18 +171,18 @@ Public Class OptionsAndDatabaseWindow
                 Try
                     ZipFile.ExtractToDirectory(file, Application.StartupPath & "\databases\")
                 Catch ex As Exception
-                    MsgBox(rm.GetString("msgGeneralError") & vbNewLine &
-                           rm.GetString("msgZipError"))
+                    MsgBox(Globals.resManager.GetString("msgGeneralError") & vbNewLine &
+                           Globals.resManager.GetString("msgZipError"))
                     MsgBox(ex.ToString)
                 End Try
             End If
 
             If file.EndsWith(".sdf") Then
                 Try
-                    FileSystem.FileCopy(file, Application.StartupPath & "\databases\" & getName(file))
+                    FileSystem.FileCopy(file, Application.StartupPath & "\databases\" & Globals.getName(file))
                 Catch ex As Exception
-                    MsgBox(rm.GetString("msgGeneralError") & vbNewLine &
-                           rm.GetString("msgSdfError"))
+                    MsgBox(Globals.resManager.GetString("msgGeneralError") & vbNewLine &
+                           Globals.resManager.GetString("msgSdfError"))
                 End Try
             End If
 
@@ -192,44 +193,44 @@ Public Class OptionsAndDatabaseWindow
     End Sub
 
     Private Sub ClearClients(sender As Object, e As EventArgs) Handles btnClearClients.Click
-        Dim result As Integer = MessageBox.Show(rm.GetString("lbAreYouSure") & vbNewLine & rm.GetString("lbCannotUndone"), rm.GetString("lbCleaning"), MessageBoxButtons.YesNoCancel)
+        Dim result As Integer = MessageBox.Show(Globals.resManager.GetString("lbAreYouSure") & vbNewLine & Globals.resManager.GetString("lbCannotUndone"), Globals.resManager.GetString("lbCleaning"), MessageBoxButtons.YesNoCancel)
         If result = DialogResult.Yes Then
-            con = New SqlCeConnection("Data Source=""" & Application.StartupPath & "\databases\" & currentDatabase & """")
-            cmd = New SqlCeCommand("DELETE FROM clients", con)
-            If con.State = ConnectionState.Closed Then con.Open()
-            cmd.ExecuteNonQuery()
+            DatabaseHelper.con = New SqlCeConnection("Data Source=""" & Application.StartupPath & "\databases\" & DatabaseHelper.currentDatabase & """")
+            DatabaseHelper.cmd = New SqlCeCommand("DELETE FROM clients", DatabaseHelper.con)
+            If DatabaseHelper.con.State = ConnectionState.Closed Then DatabaseHelper.con.Open()
+            DatabaseHelper.cmd.ExecuteNonQuery()
         End If
     End Sub
 
     Private Sub ClearItems(sender As Object, e As EventArgs) Handles btnClearItems.Click
-        Dim result As Integer = MessageBox.Show(rm.GetString("lbAreYouSure") & vbNewLine & rm.GetString("lbCannotUndone"), rm.GetString("lbCleaning"), MessageBoxButtons.YesNoCancel)
+        Dim result As Integer = MessageBox.Show(Globals.resManager.GetString("lbAreYouSure") & vbNewLine & Globals.resManager.GetString("lbCannotUndone"), Globals.resManager.GetString("lbCleaning"), MessageBoxButtons.YesNoCancel)
         If result = DialogResult.Yes Then
-            con = New SqlCeConnection("Data Source=""" & Application.StartupPath & "\databases\" & currentDatabase & """")
-            cmd = New SqlCeCommand("DELETE FROM items", con)
-            If con.State = ConnectionState.Closed Then con.Open()
-            cmd.ExecuteNonQuery()
+            DatabaseHelper.con = New SqlCeConnection("Data Source=""" & Application.StartupPath & "\databases\" & DatabaseHelper.currentDatabase & """")
+            DatabaseHelper.cmd = New SqlCeCommand("DELETE FROM items", DatabaseHelper.con)
+            If DatabaseHelper.con.State = ConnectionState.Closed Then DatabaseHelper.con.Open()
+            DatabaseHelper.cmd.ExecuteNonQuery()
         End If
     End Sub
 
     Private Sub ClearReceipts(sender As Object, e As EventArgs) Handles btnClearReceipts.Click
-        Dim result As Integer = MessageBox.Show(rm.GetString("lbAreYouSure") & vbNewLine & rm.GetString("lbCannotUndone"), rm.GetString("lbCleaning"), MessageBoxButtons.YesNoCancel)
+        Dim result As Integer = MessageBox.Show(Globals.resManager.GetString("lbAreYouSure") & vbNewLine & Globals.resManager.GetString("lbCannotUndone"), Globals.resManager.GetString("lbCleaning"), MessageBoxButtons.YesNoCancel)
         If result = DialogResult.Yes Then
-            con = New SqlCeConnection("Data Source=""" & Application.StartupPath & "\databases\" & currentDatabase & """")
-            cmd = New SqlCeCommand("DELETE FROM receipts", con)
-            cmd2 = New SqlCeCommand("DELETE FROM receipts_data", con)
-            If con.State = ConnectionState.Closed Then con.Open()
-            cmd.ExecuteNonQuery()
-            cmd2.ExecuteNonQuery()
+            DatabaseHelper.con = New SqlCeConnection("Data Source=""" & Application.StartupPath & "\databases\" & DatabaseHelper.currentDatabase & """")
+            DatabaseHelper.cmd = New SqlCeCommand("DELETE FROM receipts", DatabaseHelper.con)
+            DatabaseHelper.cmd2 = New SqlCeCommand("DELETE FROM receipts_data", DatabaseHelper.con)
+            If DatabaseHelper.con.State = ConnectionState.Closed Then DatabaseHelper.con.Open()
+            DatabaseHelper.cmd.ExecuteNonQuery()
+            DatabaseHelper.cmd2.ExecuteNonQuery()
         End If
     End Sub
 
     Private Sub SetDefaultDB(sender As Object, e As EventArgs) Handles chkSetDefault.CheckedChanged
         If chkSetDefault.Checked Then
-            asSettings.Settings.Item("autostart_database").Value = cbDbNameSelect.SelectedItem
+            Globals.appSettings.Settings.Item("autostart_database").Value = cbDbNameSelect.SelectedItem
         Else
-            asSettings.Settings.Item("autostart_database").Value = "false"
+            Globals.appSettings.Settings.Item("autostart_database").Value = "false"
         End If
-        cAppConfig.Save(ConfigurationSaveMode.Modified)
+        Globals.cAppConfig.Save(ConfigurationSaveMode.Modified)
     End Sub
     Private Sub ExportDB(sender As Object, e As EventArgs) Handles btnExportDb.Click
         FolderBrowserDialog1.ShowDialog()
@@ -261,68 +262,68 @@ Public Class OptionsAndDatabaseWindow
     Private Sub SelectLanguageChanged(sender As Object, e As EventArgs) Handles cbSelectLanguage.SelectedIndexChanged
         '' MsgBox(cbSelectLanguage.SelectedIndex)
         If cbSelectLanguage.SelectedIndex = 0 Then
-            asSettings.Settings.Item("lang").Value = "pl-PL"
+            Globals.appSettings.Settings.Item("lang").Value = "pl-PL"
 
         ElseIf cbSelectLanguage.SelectedIndex = 1 Then
-            asSettings.Settings.Item("lang").Value = "en-US"
+            Globals.appSettings.Settings.Item("lang").Value = "en-US"
         End If
-        cAppConfig.Save(ConfigurationSaveMode.Modified)
+        Globals.cAppConfig.Save(ConfigurationSaveMode.Modified)
         setLanguage()
         MainWindow.setLanguage()
     End Sub
     Sub setLanguage()
-        reloadLanguage()
-        btnClose.Text = rm.GetString("lbClose")
-        btnClearClients.Text = rm.GetString("lbClients")
-        btnClearItems.Text = rm.GetString("lbItems")
-        btnClearReceipts.Text = rm.GetString("lbReceipts")
-        btnCreateDb.Text = rm.GetString("lbCreateDB")
+        Globals.reloadLanguage()
+        btnClose.Text = Globals.resManager.GetString("lbClose")
+        btnClearClients.Text = Globals.resManager.GetString("lbClients")
+        btnClearItems.Text = Globals.resManager.GetString("lbItems")
+        btnClearReceipts.Text = Globals.resManager.GetString("lbReceipts")
+        btnCreateDb.Text = Globals.resManager.GetString("lbCreateDB")
 
-        btnCreateTask.Text = rm.GetString("lbCreateTask")
+        btnCreateTask.Text = Globals.resManager.GetString("lbCreateTask")
         btnCreateTask.AutoSize = True
 
-        btnExportDb.Text = rm.GetString("lbExportDB")
-        btnImport.Text = rm.GetString("lbImportDB")
+        btnExportDb.Text = Globals.resManager.GetString("lbExportDB")
+        btnImport.Text = Globals.resManager.GetString("lbImportDB")
 
-        btnOk.Text = rm.GetString("lbOk")
-        btnDeleteDB.Text = rm.GetString("lbDeleteDB")
+        btnOk.Text = Globals.resManager.GetString("lbOk")
+        btnDeleteDB.Text = Globals.resManager.GetString("lbDeleteDB")
 
-        lbDatabase.Text = rm.GetString("lbDatabase")
+        lbDatabase.Text = Globals.resManager.GetString("lbDatabase")
         lbDatabase.AutoSize = True
         lbDatabase.Location = New Point((cbDbNameSelect.Left - 8) - lbDatabase.Width, lbDatabase.Location.Y)
 
-        lbDatabase1.Text = rm.GetString("lbDatabase")
+        lbDatabase1.Text = Globals.resManager.GetString("lbDatabase")
         lbDatabase1.AutoSize = True
         lbDatabase1.Location = New Point((cbExportDB.Left - 8) - lbDatabase1.Width, lbDatabase1.Location.Y)
 
-        lbDatabase2.Text = rm.GetString("lbDatabase")
+        lbDatabase2.Text = Globals.resManager.GetString("lbDatabase")
         lbDatabase2.AutoSize = True
         lbDatabase2.Location = New Point((cbSelectDbName2.Left - 8) - lbDatabase2.Width, lbDatabase2.Location.Y)
 
-        lbDbName.Text = rm.GetString("lbItemName")
+        lbDbName.Text = Globals.resManager.GetString("lbItemName")
         lbDbName.AutoSize = True
         lbDbName.Location = New Point((TextBox1.Left - 8) - lbDbName.Width, lbDbName.Location.Y)
 
 
-        lbLanguage.Text = rm.GetString("lbLang")
+        lbLanguage.Text = Globals.resManager.GetString("lbLang")
         lbLanguage.AutoSize = True
         lbLanguage.Location = New Point((cbSelectLanguage.Left - 8) - lbLanguage.Width, lbLanguage.Location.Y)
 
-        chkSetDefault.Text = rm.GetString("lbSetDefaultDB")
+        chkSetDefault.Text = Globals.resManager.GetString("lbSetDefaultDB")
         chkSetDefault.AutoSize = True
 
 
-        TabSelectDb.Text = rm.GetString("lbSelectDB")
-        TabCleaning.Text = rm.GetString("lbCleaning")
-        TabDeleteDb.Text = rm.GetString("lbDeleteDB")
-        TabExportDb.Text = rm.GetString("lbExportDB")
-        TabExtras.Text = rm.GetString("lbExtras")
-        TabImportDb.Text = rm.GetString("lbImportDB")
-        TabCreateDb.Text = rm.GetString("lbCreateDB")
+        TabSelectDb.Text = Globals.resManager.GetString("lbSelectDB")
+        TabCleaning.Text = Globals.resManager.GetString("lbCleaning")
+        TabDeleteDb.Text = Globals.resManager.GetString("lbDeleteDB")
+        TabExportDb.Text = Globals.resManager.GetString("lbExportDB")
+        TabExtras.Text = Globals.resManager.GetString("lbExtras")
+        TabImportDb.Text = Globals.resManager.GetString("lbImportDB")
+        TabCreateDb.Text = Globals.resManager.GetString("lbCreateDB")
 
-        lbTemplate.Text = rm.GetString("lbTemplate")
+        lbTemplate.Text = Globals.resManager.GetString("lbTemplate")
 
-        Me.Text = rm.GetString("lbSettings")
+        Me.Text = Globals.resManager.GetString("lbSettings")
 
 
         Me.Refresh()

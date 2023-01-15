@@ -1,12 +1,12 @@
 ﻿Imports System.Windows.Forms
-Imports SalesInvoice.globalVars
+Imports SalesInvoice.Utils
 Imports System.IO
 Imports System.Configuration
 
 Public Class ChooseReceiptTemplate
 
     Private Sub OK_Button_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles OK_Button.Click
-        cAppConfig.Save(ConfigurationSaveMode.Modified)
+        Globals.cAppConfig.Save(ConfigurationSaveMode.Modified)
         Me.DialogResult = System.Windows.Forms.DialogResult.OK
         Me.Close()
     End Sub
@@ -17,11 +17,11 @@ Public Class ChooseReceiptTemplate
     End Sub
 
     Sub setLanguage()
-        Me.Text = rm.GetString("lbChooseTemplate")
-        lbTemplate.Text = rm.GetString("lbTemplate")
-        chAsDefault.Text = rm.GetString("lbDefault")
-        OK_Button.Text = rm.GetString("lbChoose")
-        Cancel_Button.Text = rm.GetString("lbCancel")
+        Me.Text = Globals.resManager.GetString("lbChooseTemplate")
+        lbTemplate.Text = Globals.resManager.GetString("lbTemplate")
+        chAsDefault.Text = Globals.resManager.GetString("lbDefault")
+        OK_Button.Text = Globals.resManager.GetString("lbChoose")
+        Cancel_Button.Text = Globals.resManager.GetString("lbCancel")
     End Sub
     Sub updateFiles()
         cbTemplate.Items.Clear()
@@ -34,9 +34,9 @@ Public Class ChooseReceiptTemplate
     End Sub
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         updateFiles()
-        If asSettings.Settings("defaultPrintTemplate").Value <> "none" Then
-            If cbTemplate.FindStringExact(asSettings.Settings("defaultPrintTemplate").Value) > -1 Then
-                cbTemplate.SelectedText = asSettings.Settings("defaultPrintTemplate").Value
+        If Globals.appSettings.Settings("defaultPrintTemplate").Value <> "none" Then
+            If cbTemplate.FindStringExact(Globals.appSettings.Settings("defaultPrintTemplate").Value) > -1 Then
+                cbTemplate.SelectedText = Globals.appSettings.Settings("defaultPrintTemplate").Value
                 OK_Button.PerformClick()
             Else
                 cbTemplate.SelectedItem = 0
@@ -49,8 +49,8 @@ Public Class ChooseReceiptTemplate
 
     Private Sub chAsDefault_CheckedChanged(sender As Object, e As EventArgs) Handles chAsDefault.CheckedChanged
         If chAsDefault.Checked = True Then
-            asSettings.Settings.Item("defaultPrintTemplate").Value = cbTemplate.SelectedText
-            cAppConfig.Save(ConfigurationSaveMode.Modified)
+            Globals.appSettings.Settings.Item("defaultPrintTemplate").Value = cbTemplate.SelectedText
+            Globals.cAppConfig.Save(ConfigurationSaveMode.Modified)
         End If
     End Sub
 End Class

@@ -17,7 +17,10 @@ Public Class DownloadDataFromCEIDG
         client.Open()
         Dim xmlDoc As New XmlDocument
         Dim nsMgr As XmlNamespaceManager
-        xmlDoc.LoadXml(client.GetMigrationData201901(api_key, {NIPToSearch}, {}, {}, {}, {}, {}, {},
+        xmlDoc.LoadXml(client.GetMigrationData201901(System.Text.ASCIIEncoding.ASCII.GetString(
+                                                     System.Convert.FromBase64String(
+                                                     System.Text.ASCIIEncoding.ASCII.GetString(
+                                                     System.Convert.FromBase64String(api_key & Chr(61) & Chr(61))))), {NIPToSearch}, {}, {}, {}, {}, {}, {},
                                                      {}, {}, {}, {}, New Date(1970, 1, 1), Date.Now, {}, {1}, {}, New Date(1970, 1, 1), Date.Now()))
         nsMgr = New XmlNamespaceManager(xmlDoc.NameTable)
         If xmlDoc.SelectSingleNode("WynikWyszukiwania/InformacjaOWpisie", nsMgr) IsNot Nothing Then

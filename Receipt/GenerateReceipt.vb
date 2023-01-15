@@ -2,7 +2,7 @@
 Imports Spire.Doc.Documents
 Imports System.Text.RegularExpressions
 Imports System.Data.SqlServerCe
-Imports SalesInvoice.globalVars
+Imports SalesInvoice.Utils
 
 Public Class GenerateReceipt
     Dim receiptNo As String = ""
@@ -13,8 +13,8 @@ Public Class GenerateReceipt
 
     Public Sub generateReceipt()
         Dim docSrc As String = ""
-        If asSettings.Settings.Item("defaultPrintTemplate").Value <> "none" And asSettings.Settings.Item("defaultPrintTemplate").Value.Length > 5 Then
-            docSrc = Application.StartupPath & "\Resources\" & asSettings.Settings.Item("defaultPrintTemplate").Value
+        If Globals.appSettings.Settings.Item("defaultPrintTemplate").Value <> "none" And Globals.appSettings.Settings.Item("defaultPrintTemplate").Value.Length > 5 Then
+            docSrc = Application.StartupPath & "\Resources\" & Globals.appSettings.Settings.Item("defaultPrintTemplate").Value
         Else
             Using chooseTmp = New ChooseReceiptTemplate
                 If DialogResult.OK = chooseTmp.ShowDialog() Then
@@ -25,22 +25,22 @@ Public Class GenerateReceipt
         If docSrc.Length > 0 Then
             Dim doc As New Document(docSrc)
 
-            doc.Replace(New Regex("{{SELLER_TITLE}}"), asSettings.Settings.Item("headlineInfo").Value)
-            doc.Replace(New Regex("{{SELLER_NAME}}"), asSettings.Settings.Item("sellerName").Value)
-            If asSettings.Settings.Item("address").Value.Length > 2 Then
-                doc.Replace(New Regex("{{SELLER_ADDRESS1}}"), asSettings.Settings.Item("address").Value & " " & asSettings.Settings.Item("buildingNo").Value)
+            doc.Replace(New Regex("{{SELLER_TITLE}}"), Globals.appSettings.Settings.Item("headlineInfo").Value)
+            doc.Replace(New Regex("{{SELLER_NAME}}"), Globals.appSettings.Settings.Item("sellerName").Value)
+            If Globals.appSettings.Settings.Item("address").Value.Length > 2 Then
+                doc.Replace(New Regex("{{SELLER_ADDRESS1}}"), Globals.appSettings.Settings.Item("address").Value & " " & Globals.appSettings.Settings.Item("buildingNo").Value)
             Else
-                doc.Replace(New Regex("{{SELLER_ADDRESS1}}"), asSettings.Settings.Item("city").Value & " " & asSettings.Settings.Item("buildingNo").Value)
+                doc.Replace(New Regex("{{SELLER_ADDRESS1}}"), Globals.appSettings.Settings.Item("city").Value & " " & Globals.appSettings.Settings.Item("buildingNo").Value)
             End If
-            doc.Replace(New Regex("{{SELLER_ADDRESS2}}"), asSettings.Settings.Item("postalCode").Value & " " & asSettings.Settings.Item("city").Value)
-            doc.Replace(New Regex("{{SELLER_PHONE}}"), "tel." & asSettings.Settings.Item("phone").Value)
+            doc.Replace(New Regex("{{SELLER_ADDRESS2}}"), Globals.appSettings.Settings.Item("postalCode").Value & " " & Globals.appSettings.Settings.Item("city").Value)
+            doc.Replace(New Regex("{{SELLER_PHONE}}"), "tel." & Globals.appSettings.Settings.Item("phone").Value)
             doc.Replace(New Regex("{{RECEIPT_NO}}"), receiptNo)
 
-            cmd = New SqlCeCommand("SELECT ddate FROM receipts where receipt_id = '" & receiptNo & "'", con)
-            If con.State = ConnectionState.Closed Then con.Open()
-            cmd.ExecuteNonQuery()
+            DatabaseHelper.cmd = New SqlCeCommand("SELECT ddate FROM receipts where receipt_id = '" & receiptNo & "'", DatabaseHelper.con)
+            If DatabaseHelper.con.State = ConnectionState.Closed Then DatabaseHelper.con.Open()
+            DatabaseHelper.cmd.ExecuteNonQuery()
 
-            Using rd As SqlCeDataReader = cmd.ExecuteReader()
+            Using rd As SqlCeDataReader = DatabaseHelper.cmd.ExecuteReader()
                 If rd.Read() Then
                     doc.Replace(New Regex("{{DATE}}"), rd.GetValue(0))
                 End If
@@ -48,10 +48,10 @@ Public Class GenerateReceipt
 
 
 
-            cmd = New SqlCeCommand("SELECT TOP 1 * FROM clients INNER JOIN receipts ON clients.id = receipts.client_id WHERE receipt_id = '" & receiptNo & "'", con)
-            If con.State = ConnectionState.Closed Then con.Open()
-            cmd.ExecuteNonQuery()
-            Using rd As SqlCeDataReader = cmd.ExecuteReader
+            DatabaseHelper.cmd = New SqlCeCommand("SELECT TOP 1 * FROM clients INNER JOIN receipts ON clients.id = receipts.client_id WHERE receipt_id = '" & receiptNo & "'", DatabaseHelper.con)
+            If DatabaseHelper.con.State = ConnectionState.Closed Then DatabaseHelper.con.Open()
+            DatabaseHelper.cmd.ExecuteNonQuery()
+            Using rd As SqlCeDataReader = DatabaseHelper.cmd.ExecuteReader
                 If rd.Read() Then
                     Dim tmp = rd.GetValue(1)
                     If rd.GetValue(4).ToString.Length > 0 Then
@@ -70,6 +70,11 @@ Public Class GenerateReceipt
 
                     End If
 
+                    If rd.GetValue(4).ToString().Length > 2 Then
+                        doc.Replace(New Regex("{{BUYER_ID}}"), "NIP: " & rd.GetValue(4))
+                    Else
+                        doc.Replace(New Regex("{{BUYER_ID}}"), "")
+                    End If
                     If rd.GetValue(2).ToString.Length > 2 Then
                         doc.Replace(New Regex("{{BUYER_PHONE}}"), "tel. " & rd.GetValue(2))
                     Else
@@ -86,9 +91,9 @@ Public Class GenerateReceipt
             Dim itemsInReceiptCount = 0
             Dim SumAll As Double = 0
 
-            cmd = New SqlCeCommand("SELECT items.name, SUM(receipts_data.amount) AS Expr3, units.name AS Expr2, items.price, SUM(receipts_data.amount * items.price) AS Expr1 FROM receipts INNER JOIN receipts_data ON receipts.receipt_id = receipts_data.receipt_id INNER JOIN items ON receipts_data.code = items.id INNER JOIN units ON items.unit = units.id WHERE (receipts.receipt_id = '" & receiptNo & "') GROUP BY units.name, items.name, items.price", con)
-            cmd.ExecuteNonQuery()
-            Using rd As SqlCeDataReader = cmd.ExecuteReader
+            DatabaseHelper.cmd = New SqlCeCommand("SELECT items.name, SUM(receipts_data.amount) AS Expr3, units.name AS Expr2, items.price, SUM(receipts_data.amount * items.price) AS Expr1 FROM receipts INNER JOIN receipts_data ON receipts.receipt_id = receipts_data.receipt_id INNER JOIN items ON receipts_data.code = items.id INNER JOIN units ON items.unit = units.id WHERE (receipts.receipt_id = '" & receiptNo & "') GROUP BY units.name, items.name, items.price", DatabaseHelper.con)
+            DatabaseHelper.cmd.ExecuteNonQuery()
+            Using rd As SqlCeDataReader = DatabaseHelper.cmd.ExecuteReader
                 While rd.Read()
                     dri = receiptItemsTable.AddRow(6)
                     For Each i As TableCell In dri.Cells
@@ -114,20 +119,20 @@ Public Class GenerateReceipt
                     'dri = 
                 End While
             End Using
-            cmd = New SqlCeCommand("", con)
+            DatabaseHelper.cmd = New SqlCeCommand("", DatabaseHelper.con)
             doc.Replace(New Regex("{{SUM_ALL}}"), SumAll)
-            doc.Replace(New Regex("{{FOOTER_TEXT}}"), asSettings.Settings.Item("footerText").Value)
+            doc.Replace(New Regex("{{FOOTER_TEXT}}"), Globals.appSettings.Settings.Item("footerText").Value)
 
             '        doc.SaveToFile("receipts/" & receiptNo.Replace("/", "_") & currentDatabase & ".pdf", FileFormat.PDF)
             ' Try
             'doc.SaveToFile("receipts/" & receiptNo.Replace("/", "_") & ".pdf", FileFormat.PDF)
-            filename = "receipts/" & receiptNo.Replace("/", "_") & "_" & currentDatabase & ".pdf"
+            filename = "receipts/" & receiptNo.Replace("/", "_") & "_" & DatabaseHelper.currentDatabase & ".pdf"
             doc.SaveToFile(filename, FileFormat.PDF)
             ' Catch ex As Exception
-            '    MsgBox(rm.GetString("msgFileError"))
+            '    MsgBox(Globals.resManager.GetString("msgFileError"))
             ' End Try
         End If
-        con.Close()
+        DatabaseHelper.con.Close()
     End Sub
     Public Sub PreviewReceipt()
         If filename.Length > 0 Then

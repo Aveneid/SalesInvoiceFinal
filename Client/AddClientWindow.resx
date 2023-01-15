@@ -121,11 +121,11 @@
   <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
     <value>327, 306</value>
   </data>
+  <data name="&gt;&gt;btnAdd.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
   <data name="PHONEDATA.Mask" xml:space="preserve">
     <value>000000000</value>
-  </data>
-  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>311, 268</value>
   </data>
   <data name="&gt;&gt;PESELRADIO.Name" xml:space="preserve">
     <value>PESELRADIO</value>
@@ -136,9 +136,6 @@
   </data>
   <data name="&gt;&gt;lbAddress.Name" xml:space="preserve">
     <value>lbAddress</value>
-  </data>
-  <data name="NAMEDATA.Location" type="System.Drawing.Point, System.Drawing">
-    <value>98, 13</value>
   </data>
   <data name="lbDownloadGUS.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -173,9 +170,6 @@
   <data name="&gt;&gt;PHONEDATA.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;NIPRADIO.Parent" xml:space="preserve">
-    <value>GroupBox1</value>
-  </data>
   <data name="btnAdd.Text" xml:space="preserve">
     <value>Add</value>
   </data>
@@ -184,6 +178,9 @@
   </data>
   <data name="btnAdd.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
+  </data>
+  <data name="PESELRADIO.TabIndex" type="System.Int32, mscorlib">
+    <value>13</value>
   </data>
   <data name="NIPRADIO.Size" type="System.Drawing.Size, System.Drawing">
     <value>14, 13</value>
@@ -197,11 +194,8 @@
   <data name="&gt;&gt;NAMEDATA.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;Label4.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;lbDownloadGUS.Type" xml:space="preserve">
-    <value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="ADDRESSDATA.Text" xml:space="preserve">
+    <value />
   </data>
   <data name="NIPDATA.Location" type="System.Drawing.Point, System.Drawing">
     <value>26, 20</value>
@@ -212,9 +206,6 @@
   <data name="&gt;&gt;lbAddress.ZOrder" xml:space="preserve">
     <value>5</value>
   </data>
-  <data name="&gt;&gt;lbDownloadGUS.Name" xml:space="preserve">
-    <value>lbDownloadGUS</value>
-  </data>
   <data name="&gt;&gt;ADDRESSDATA.Name" xml:space="preserve">
     <value>ADDRESSDATA</value>
   </data>
@@ -224,8 +215,8 @@
   <data name="&gt;&gt;GroupBox1.Type" xml:space="preserve">
     <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;NOTHINGRADIO.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;ADDRESSDATA.Parent" xml:space="preserve">
+    <value>$this</value>
   </data>
   <data name="lbAddress.Size" type="System.Drawing.Size, System.Drawing">
     <value>45, 13</value>
@@ -251,14 +242,14 @@
   <data name="lbName.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 16</value>
   </data>
-  <data name="lbAddress.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 143</value>
-  </data>
   <data name="NOTHINGRADIO.Size" type="System.Drawing.Size, System.Drawing">
     <value>14, 13</value>
   </data>
   <data name="&gt;&gt;NIPRADIO.Type" xml:space="preserve">
     <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="GroupBox1.TabIndex" type="System.Int32, mscorlib">
+    <value>13</value>
   </data>
   <data name="PESELDATA.Location" type="System.Drawing.Point, System.Drawing">
     <value>153, 20</value>
@@ -278,11 +269,17 @@
   <data name="NIPRADIO.Location" type="System.Drawing.Point, System.Drawing">
     <value>6, 23</value>
   </data>
+  <data name="NIPDATA.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;lbPhone.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="GroupBox1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 88</value>
+  </data>
   <data name="PESELRADIO.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
-  </data>
-  <data name="PESELRADIO.Location" type="System.Drawing.Point, System.Drawing">
-    <value>133, 23</value>
   </data>
   <data name="lbPhone.Size" type="System.Drawing.Size, System.Drawing">
     <value>76, 13</value>
@@ -323,8 +320,71 @@
   <data name="&gt;&gt;lbDownloadGUS.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="NIPDATA.TabIndex" type="System.Int32, mscorlib">
+  <data name="PESELRADIO.Location" type="System.Drawing.Point, System.Drawing">
+    <value>133, 23</value>
+  </data>
+  <data name="lbName.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="&gt;&gt;lbPhone.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ADDRESSDATA.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RichTextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;NIPDATA.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="lbDownloadGUS.Text" xml:space="preserve">
+    <value>Download data from GUS</value>
+  </data>
+  <data name="&gt;&gt;PESELRADIO.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="Label4.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 91</value>
+  </data>
+  <data name="&gt;&gt;NIPDATA.Name" xml:space="preserve">
+    <value>NIPDATA</value>
+  </data>
+  <data name="lbName.Text" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="&gt;&gt;PESELDATA.Parent" xml:space="preserve">
+    <value>GroupBox1</value>
+  </data>
+  <data name="&gt;&gt;NAMEDATA.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RichTextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="$this.MaximumSize" type="System.Drawing.Size, System.Drawing">
+    <value>327, 306</value>
+  </data>
+  <data name="GroupBox1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>287, 46</value>
+  </data>
+  <data name="&gt;&gt;PHONEDATA.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;GroupBox1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;NIPRADIO.Name" xml:space="preserve">
+    <value>NIPRADIO</value>
+  </data>
+  <data name="&gt;&gt;PESELRADIO.Parent" xml:space="preserve">
+    <value>GroupBox1</value>
+  </data>
+  <data name="&gt;&gt;NAMEDATA.Name" xml:space="preserve">
+    <value>NAMEDATA</value>
+  </data>
+  <data name="NAMEDATA.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
+  </data>
+  <data name="&gt;&gt;ADDRESSDATA.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;Label4.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -735,80 +795,14 @@
         a98G/yz/D1n4ORSU6/U5AAAAAElFTkSuQmCC
 </value>
   </data>
-  <data name="&gt;&gt;lbPhone.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;ADDRESSDATA.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RichTextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;NIPDATA.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;NIPDATA.Type" xml:space="preserve">
-    <value>System.Windows.Forms.MaskedTextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;PESELRADIO.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="Label4.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 91</value>
-  </data>
-  <data name="&gt;&gt;NIPDATA.Name" xml:space="preserve">
-    <value>NIPDATA</value>
-  </data>
-  <data name="lbName.Text" xml:space="preserve">
-    <value>Name</value>
-  </data>
-  <data name="&gt;&gt;PESELDATA.Parent" xml:space="preserve">
-    <value>GroupBox1</value>
-  </data>
-  <data name="&gt;&gt;NAMEDATA.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RichTextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="$this.MaximumSize" type="System.Drawing.Size, System.Drawing">
-    <value>327, 306</value>
-  </data>
-  <data name="GroupBox1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>287, 46</value>
-  </data>
-  <data name="lbAddress.Text" xml:space="preserve">
-    <value>Address</value>
-  </data>
-  <data name="&gt;&gt;PHONEDATA.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="&gt;&gt;GroupBox1.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;PESELRADIO.Parent" xml:space="preserve">
-    <value>GroupBox1</value>
-  </data>
-  <data name="&gt;&gt;NAMEDATA.Name" xml:space="preserve">
-    <value>NAMEDATA</value>
-  </data>
-  <data name="NAMEDATA.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;ADDRESSDATA.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="&gt;&gt;NIPRADIO.Name" xml:space="preserve">
-    <value>NIPRADIO</value>
-  </data>
-  <data name="PESELRADIO.TabIndex" type="System.Int32, mscorlib">
-    <value>13</value>
-  </data>
   <data name="lbPhone.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="&gt;&gt;btnAdd.Name" xml:space="preserve">
     <value>btnAdd</value>
   </data>
-  <data name="lbName.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="NIPDATA.Mask" xml:space="preserve">
-    <value>000-000-0000</value>
+  <data name="&gt;&gt;lbDownloadGUS.Name" xml:space="preserve">
+    <value>lbDownloadGUS</value>
   </data>
   <data name="btnAdd.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -828,8 +822,8 @@
   <data name="$this.Text" xml:space="preserve">
     <value>Add client</value>
   </data>
-  <data name="lbDownloadGUS.Text" xml:space="preserve">
-    <value>Download data from GUS</value>
+  <data name="NAMEDATA.Location" type="System.Drawing.Point, System.Drawing">
+    <value>98, 13</value>
   </data>
   <data name="&gt;&gt;lbDownloadGUS.ZOrder" xml:space="preserve">
     <value>0</value>
@@ -837,17 +831,20 @@
   <data name="lbName.Size" type="System.Drawing.Size, System.Drawing">
     <value>35, 13</value>
   </data>
-  <data name="&gt;&gt;btnAdd.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="&gt;&gt;NIPDATA.Type" xml:space="preserve">
+    <value>System.Windows.Forms.MaskedTextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="GroupBox1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 88</value>
+  <data name="&gt;&gt;NIPRADIO.Parent" xml:space="preserve">
+    <value>GroupBox1</value>
+  </data>
+  <data name="PESELDATA.Size" type="System.Drawing.Size, System.Drawing">
+    <value>101, 20</value>
   </data>
   <data name="&gt;&gt;lbPhone.Name" xml:space="preserve">
     <value>lbPhone</value>
   </data>
-  <data name="&gt;&gt;ADDRESSDATA.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="&gt;&gt;NOTHINGRADIO.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RadioButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="NAMEDATA.Text" xml:space="preserve">
     <value />
@@ -857,6 +854,9 @@
   </data>
   <data name="&gt;&gt;Label4.Name" xml:space="preserve">
     <value>Label4</value>
+  </data>
+  <data name="ADDRESSDATA.Location" type="System.Drawing.Point, System.Drawing">
+    <value>98, 140</value>
   </data>
   <data name="lbDownloadGUS.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 241</value>
@@ -882,14 +882,14 @@
   <data name="lbPhone.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 65</value>
   </data>
-  <data name="&gt;&gt;lbPhone.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="lbAddress.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 143</value>
   </data>
   <data name="&gt;&gt;PHONEDATA.Name" xml:space="preserve">
     <value>PHONEDATA</value>
   </data>
-  <data name="GroupBox1.TabIndex" type="System.Int32, mscorlib">
-    <value>13</value>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>311, 268</value>
   </data>
   <data name="&gt;&gt;NOTHINGRADIO.ZOrder" xml:space="preserve">
     <value>0</value>
@@ -897,11 +897,11 @@
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
     <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="ADDRESSDATA.Text" xml:space="preserve">
-    <value />
+  <data name="lbAddress.Text" xml:space="preserve">
+    <value>Address</value>
   </data>
-  <data name="ADDRESSDATA.Location" type="System.Drawing.Point, System.Drawing">
-    <value>98, 140</value>
+  <data name="NIPDATA.Mask" xml:space="preserve">
+    <value>000-000-0000</value>
   </data>
   <data name="&gt;&gt;NOTHINGRADIO.Parent" xml:space="preserve">
     <value>GroupBox1</value>
@@ -921,8 +921,8 @@
   <data name="&gt;&gt;lbName.ZOrder" xml:space="preserve">
     <value>8</value>
   </data>
-  <data name="PESELDATA.Size" type="System.Drawing.Size, System.Drawing">
-    <value>101, 20</value>
+  <data name="&gt;&gt;lbDownloadGUS.Type" xml:space="preserve">
+    <value>System.Windows.Forms.LinkLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>

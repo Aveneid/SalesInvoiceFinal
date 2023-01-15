@@ -1,53 +1,53 @@
 ﻿Imports System.Configuration
 Imports System.Collections.Specialized
-Imports SalesInvoice.globalVars
+Imports SalesInvoice.Utils
 Public Class Informations
     Sub setLanguage()
 
         'header
-        tbHeader.Text = rm.GetString("lbHeaderText")
-        lbHeaderText.Text = rm.GetString("lbHeaderText")
+        tbHeader.Text = Globals.resManager.GetString("lbHeaderText")
+        lbHeaderText.Text = Globals.resManager.GetString("lbHeaderText")
         lbHeaderText.Location = New Point(Me.Width / 2 - lbHeaderText.Width / 2, lbHeaderText.Location.Y)
 
         'footer
-        tbFooter.Text = rm.GetString("lbFooterText")
-        lbFooterText.Text = rm.GetString("lbFooterText")
+        tbFooter.Text = Globals.resManager.GetString("lbFooterText")
+        lbFooterText.Text = Globals.resManager.GetString("lbFooterText")
         lbFooterText.Location = New Point(Me.Width / 2 - lbFooterText.Width / 2, lbFooterText.Location.Y)
 
 
         'seller
-        tbSeller.Text = rm.GetString("lbIdData")
-        lbName.Text = rm.GetString("lbItemName")
-        lbAddress.Text = rm.GetString("lbAddress")
-        lbAddressNo.Text = rm.GetString("lbAddressNo")
-        lbCity.Text = rm.GetString("lbCity")
-        lbPostal.Text = rm.GetString("lbPostal")
-        lbPhone.Text = rm.GetString("lbPhone")
-        lbPesel.Text = rm.GetString("lbPESEL") & " (*)"
+        tbSeller.Text = Globals.resManager.GetString("lbIdData")
+        lbName.Text = Globals.resManager.GetString("lbItemName")
+        lbAddress.Text = Globals.resManager.GetString("lbAddress")
+        lbAddressNo.Text = Globals.resManager.GetString("lbAddressNo")
+        lbCity.Text = Globals.resManager.GetString("lbCity")
+        lbPostal.Text = Globals.resManager.GetString("lbPostal")
+        lbPhone.Text = Globals.resManager.GetString("lbPhone")
+        lbPesel.Text = Globals.resManager.GetString("lbPESEL") & " (*)"
 
         'bank
-        tbBank.Text = rm.GetString("lbBankDetails")
-        lbAccountNo.Text = rm.GetString("lbAccountNO")
-        lbBankAddress.Text = rm.GetString("lbBankAddress")
+        tbBank.Text = Globals.resManager.GetString("lbBankDetails")
+        lbAccountNo.Text = Globals.resManager.GetString("lbAccountNO")
+        lbBankAddress.Text = Globals.resManager.GetString("lbBankAddress")
 
 
-        rtbSellerName.Text = asSettings.Settings("sellerName").Value
-        Address_1.Text = asSettings.Settings("address").Value
-        Address_2.Text = asSettings.Settings("buildingNo").Value
-        Address_3.Text = asSettings.Settings("city").Value
-        Address_4.Text = asSettings.Settings("postalCode").Value
-        Phone.Text = asSettings.Settings("phone").Value
-        Pesel.Text = asSettings.Settings("pesel").Value
+        rtbSellerName.Text = Globals.appSettings.Settings("sellerName").Value
+        Address_1.Text = Globals.appSettings.Settings("address").Value
+        Address_2.Text = Globals.appSettings.Settings("buildingNo").Value
+        Address_3.Text = Globals.appSettings.Settings("city").Value
+        Address_4.Text = Globals.appSettings.Settings("postalCode").Value
+        Phone.Text = Globals.appSettings.Settings("phone").Value
+        Pesel.Text = Globals.appSettings.Settings("pesel").Value
 
-        AccountNo.Text = asSettings.Settings("accountNo").Value
-        BankAddress.Text = asSettings.Settings("bankAddress").Value
+        AccountNo.Text = Globals.appSettings.Settings("accountNo").Value
+        BankAddress.Text = Globals.appSettings.Settings("bankAddress").Value
 
-        rtbFooterText.Text = asSettings.Settings("footerText").Value
-        Headline_info.Text = asSettings.Settings("headlineInfo").Value
+        rtbFooterText.Text = Globals.appSettings.Settings("footerText").Value
+        Headline_info.Text = Globals.appSettings.Settings("headlineInfo").Value
 
 
-        Me.Text = rm.GetString("lbInfo")
-        btnSave.Text = rm.GetString("lbSave")
+        Me.Text = Globals.resManager.GetString("lbInfo")
+        btnSave.Text = Globals.resManager.GetString("lbSave")
         Me.Refresh()
 
     End Sub
@@ -57,37 +57,37 @@ Public Class Informations
 
         'Header info
 
-        asSettings.Settings.Item("headlineInfo").Value = Headline_info.Text
+        Globals.appSettings.Settings.Item("headlineInfo").Value = Headline_info.Text
 
         'footerInfo
-        asSettings.Settings.Item("footerText").Value = rtbFooterText.Text
+        Globals.appSettings.Settings.Item("footerText").Value = rtbFooterText.Text
 
         'Seller info
-        asSettings.Settings.Item("sellerName").Value = rtbSellerName.Text
-        asSettings.Settings.Item("address").Value = Address_1.Text
-        asSettings.Settings.Item("buildingNo").Value = Address_2.Text
-        asSettings.Settings.Item("city").Value = Address_3.Text
-        asSettings.Settings.Item("postalCode").Value = Address_4.Text
-        asSettings.Settings.Item("phone").Value = Phone.Text
-        asSettings.Settings.Item("pesel").Value = Pesel.Text
+        Globals.appSettings.Settings.Item("sellerName").Value = rtbSellerName.Text
+        Globals.appSettings.Settings.Item("address").Value = Address_1.Text
+        Globals.appSettings.Settings.Item("buildingNo").Value = Address_2.Text
+        Globals.appSettings.Settings.Item("city").Value = Address_3.Text
+        Globals.appSettings.Settings.Item("postalCode").Value = Address_4.Text
+        Globals.appSettings.Settings.Item("phone").Value = Phone.Text
+        Globals.appSettings.Settings.Item("pesel").Value = Pesel.Text
 
         'Bank info
 
         If AccountNo.Text IsNot Nothing And BankAddress.Text IsNot Nothing Then
-            asSettings.Settings.Item("accountNo").Value = AccountNo.Text
-            asSettings.Settings.Item("bankAddress").Value = BankAddress.Text
+            Globals.appSettings.Settings.Item("accountNo").Value = AccountNo.Text
+            Globals.appSettings.Settings.Item("bankAddress").Value = BankAddress.Text
         End If
         If rtbFooterText.Text <> "" Then
-            asSettings.Settings("footerText").Value = rtbFooterText.Text
+            Globals.appSettings.Settings("footerText").Value = rtbFooterText.Text
         Else
-            asSettings.Settings("footerText").Value = ""
+            Globals.appSettings.Settings("footerText").Value = ""
         End If
         If Headline_info.Text <> "" Then
-            asSettings.Settings("headlineInfo").Value = Headline_info.Text
+            Globals.appSettings.Settings("headlineInfo").Value = Headline_info.Text
         Else
-            asSettings.Settings("headlineInfo").Value = ""
+            Globals.appSettings.Settings("headlineInfo").Value = ""
         End If
-        cAppConfig.Save(ConfigurationSaveMode.Modified)
+        Globals.cAppConfig.Save(ConfigurationSaveMode.Modified)
         MsgBox("Information updated")
         Me.Close()
     End Sub
@@ -96,23 +96,23 @@ Public Class Informations
         setLanguage()
 
 
-        ToolTip1.ToolTipTitle = rm.GetString("lbWarning")
-        ToolTip1.SetToolTip(lbPesel, rm.GetString("msgNotRequired"))
-        ToolTip1.SetToolTip(Pesel, rm.GetString("msgNotRequired"))
+        ToolTip1.ToolTipTitle = Globals.resManager.GetString("lbWarning")
+        ToolTip1.SetToolTip(lbPesel, Globals.resManager.GetString("msgNotRequired"))
+        ToolTip1.SetToolTip(Pesel, Globals.resManager.GetString("msgNotRequired"))
 
-        Headline_info.Text = asSettings.Settings.Item("headlineInfo").Value
+        Headline_info.Text = Globals.appSettings.Settings.Item("headlineInfo").Value
 
-        rtbFooterText.Text = asSettings.Settings.Item("footerText").Value
+        rtbFooterText.Text = Globals.appSettings.Settings.Item("footerText").Value
 
-        rtbSellerName.Text = asSettings.Settings.Item("sellerName").Value
-        Address_1.Text = asSettings.Settings.Item("address").Value
-        Address_2.Text = asSettings.Settings.Item("buildingNo").Value
-        Address_3.Text = asSettings.Settings.Item("city").Value
-        Address_4.Text = asSettings.Settings.Item("postalCode").Value
-        Phone.Text = asSettings.Settings.Item("phone").Value
-        Pesel.Text = asSettings.Settings.Item("pesel").Value
+        rtbSellerName.Text = Globals.appSettings.Settings.Item("sellerName").Value
+        Address_1.Text = Globals.appSettings.Settings.Item("address").Value
+        Address_2.Text = Globals.appSettings.Settings.Item("buildingNo").Value
+        Address_3.Text = Globals.appSettings.Settings.Item("city").Value
+        Address_4.Text = Globals.appSettings.Settings.Item("postalCode").Value
+        Phone.Text = Globals.appSettings.Settings.Item("phone").Value
+        Pesel.Text = Globals.appSettings.Settings.Item("pesel").Value
 
-        AccountNo.Text = asSettings.Settings.Item("accountNo").Value
-        BankAddress.Text = asSettings.Settings.Item("bankAddress").Value
+        AccountNo.Text = Globals.appSettings.Settings.Item("accountNo").Value
+        BankAddress.Text = Globals.appSettings.Settings.Item("bankAddress").Value
     End Sub
 End Class
