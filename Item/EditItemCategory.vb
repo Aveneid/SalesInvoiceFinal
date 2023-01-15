@@ -1,5 +1,5 @@
 ﻿Imports System.Windows.Forms
-Imports SalesInvoice.Utils
+Imports SalesInvoice.globalVars
 Imports System.Data.SqlServerCe
 
 
@@ -17,13 +17,13 @@ Public Class EditCategory
     End Sub
 
     Private Sub Dialog1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Me.Text = Globals.resManager.GetString("lbEdit")
-        lbCatName.Text = Globals.resManager.GetString("lbCategory")
+        Me.Text = rm.GetString("lbEdit")
+        lbCatName.Text = rm.GetString("lbCategory")
 
-        DatabaseHelper.cmd = New SqlCeCommand("select name as c from Categories", DatabaseHelper.con)
-        If DatabaseHelper.con.State = ConnectionState.Closed Then DatabaseHelper.con.Open()
-        DatabaseHelper.cmd.ExecuteNonQuery()
-        Using rd As SqlCeDataReader = DatabaseHelper.cmd.ExecuteReader
+        cmd = New SqlCeCommand("select name as c from Categories", con)
+        If con.State = ConnectionState.Closed Then con.Open()
+        cmd.ExecuteNonQuery()
+        Using rd As SqlCeDataReader = cmd.ExecuteReader
             While rd.Read()
                 cbCategories.Items.Add(rd.GetValue(0))
             End While

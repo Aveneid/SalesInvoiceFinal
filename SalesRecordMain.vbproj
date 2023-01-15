@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\packages\EntityFramework.6.4.4\build\EntityFramework.props" Condition="Exists('..\..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -72,7 +73,7 @@
     <ApplicationIcon>Resources\hand.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>false</SignManifests>
+    <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
@@ -90,27 +91,57 @@
     <TargetZone>LocalIntranet</TargetZone>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Spire.Common">
-      <HintPath>..\..\Visual Studio 2015\Projects\autoclicker\SalesInvoice\packages\FreeSpire.Office.4.3.1\lib\net40\Spire.Common.dll</HintPath>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Spire.Doc, Version=10.7.10.0, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Visual Studio 2015\Projects\autoclicker\SalesInvoice\packages\FreeSpire.Office.4.3.1\lib\net40\Spire.Doc.dll</HintPath>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Spire.DocViewer.Forms">
-      <HintPath>..\..\Visual Studio 2015\Projects\autoclicker\SalesInvoice\packages\FreeSpire.Office.4.3.1\lib\net40\Spire.DocViewer.Forms.dll</HintPath>
+    <Reference Include="Spire.Barcode, Version=3.2.0.14040, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FreeSpire.Office.4.3.1\lib\net40\Spire.Barcode.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Spire.Common, Version=2.2.16.19040, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FreeSpire.Office.4.3.1\lib\net40\Spire.Common.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Spire.DataExport, Version=4.1.9.19040, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FreeSpire.Office.4.3.1\lib\net40\Spire.DataExport.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Spire.DataExport.ResourceMgr, Version=2.1.0.19040, Culture=neutral, PublicKeyToken=4bc1500157862925, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FreeSpire.Office.4.3.1\lib\net40\Spire.DataExport.ResourceMgr.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Spire.Doc, Version=7.2.8.19040, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FreeSpire.Office.4.3.1\lib\net40\Spire.Doc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Spire.DocViewer.Forms, Version=4.1.10.19040, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FreeSpire.Office.4.3.1\lib\net40\Spire.DocViewer.Forms.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Spire.License, Version=1.3.7.40, Culture=neutral, PublicKeyToken=b1144360237c8b3f, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Visual Studio 2015\Projects\autoclicker\SalesInvoice\packages\FreeSpire.Office.4.3.1\lib\net40\Spire.License.dll</HintPath>
+      <HintPath>..\..\packages\FreeSpire.Office.4.3.1\lib\net40\Spire.License.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Spire.Pdf, Version=8.7.2.0, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Visual Studio 2015\Projects\autoclicker\SalesInvoice\packages\FreeSpire.Office.4.3.1\lib\net40\Spire.Pdf.dll</HintPath>
+    <Reference Include="Spire.Pdf, Version=5.2.17.19040, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FreeSpire.Office.4.3.1\lib\net40\Spire.Pdf.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Spire.PdfViewer.Forms, Version=4.2.7.19040, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Visual Studio 2015\Projects\autoclicker\SalesInvoice\packages\FreeSpire.Office.4.3.1\lib\net40\Spire.PdfViewer.Forms.dll</HintPath>
+      <HintPath>..\..\packages\FreeSpire.Office.4.3.1\lib\net40\Spire.PdfViewer.Forms.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Spire.Presentation, Version=4.2.6.19040, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FreeSpire.Office.4.3.1\lib\net40\Spire.Presentation.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Spire.XLS, Version=9.2.16.19040, Culture=neutral, PublicKeyToken=663f351905198cb3, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FreeSpire.Office.4.3.1\lib\net40\Spire.XLS.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System">
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.dll</HintPath>
@@ -216,6 +247,7 @@
     <Compile Include="Options\OptionsAndDatabaseWindow.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="globalVars.vb" />
     <Compile Include="Options\Informations.Designer.vb">
       <DependentUpon>Informations.vb</DependentUpon>
     </Compile>
@@ -301,8 +333,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
-    <Compile Include="Utils\DatabaseHelper.vb" />
-    <Compile Include="Utils\Globals.vb" />
+    <Compile Include="Settings.vb" />
     <Compile Include="Wizard\FirstRunWizard.Designer.vb">
       <DependentUpon>FirstRunWizard.vb</DependentUpon>
     </Compile>
@@ -571,6 +602,16 @@
       <IncludeHash>True</IncludeHash>
       <FileType>Satellite</FileType>
     </PublishFile>
+    <PublishFile Include="Spire.Barcode">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>Assembly</FileType>
+    </PublishFile>
     <PublishFile Include="Spire.Common.xml">
       <Visible>False</Visible>
       <Group>
@@ -590,6 +631,16 @@
       <PublishState>Exclude</PublishState>
       <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Spire.DocViewer.Forms">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>Assembly</FileType>
     </PublishFile>
     <PublishFile Include="Spire.Pdf.xml">
       <Visible>False</Visible>
@@ -611,6 +662,16 @@
       <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
+    <PublishFile Include="Spire.Presentation">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>Assembly</FileType>
+    </PublishFile>
     <PublishFile Include="Spire.Presentation.xml">
       <Visible>False</Visible>
       <Group>
@@ -620,6 +681,16 @@
       <PublishState>Exclude</PublishState>
       <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="Spire.XLS">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>Assembly</FileType>
     </PublishFile>
     <PublishFile Include="Spire.XLS.xml">
       <Visible>False</Visible>
@@ -653,7 +724,14 @@
     </PublishFile>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
-  <Import Project="packages\EntityFramework.6.4.4\build\EntityFramework.targets" Condition="Exists('packages\EntityFramework.6.4.4\build\EntityFramework.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\EntityFramework.6.4.4\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\EntityFramework.6.4.4\build\EntityFramework.targets'))" />
+  </Target>
+  <Import Project="..\..\packages\EntityFramework.6.4.4\build\EntityFramework.targets" Condition="Exists('..\..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

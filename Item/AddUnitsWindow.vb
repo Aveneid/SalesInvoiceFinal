@@ -1,4 +1,4 @@
-﻿Imports SalesInvoice.Utils
+﻿Imports SalesInvoice.globalVars
 Imports System.Data.SqlServerCe
 Public Class AddUnitsWindow
     Private Sub AddUnitsWindow_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -7,25 +7,25 @@ Public Class AddUnitsWindow
         TextBox1.Focus()
     End Sub
     Sub setLanguage()
-        btnAdd.Text = Globals.resManager.GetString("lbAdd")
-        btnDelete.Text = Globals.resManager.GetString("lbDelete")
-        btnOk.Text = Globals.resManager.GetString("lbOk")
-        lbUnits.Text = Globals.resManager.GetString("lbUnit")
-        Me.Text = Globals.resManager.GetString("lbAddUnits")
+        btnAdd.Text = rm.GetString("lbAdd")
+        btnDelete.Text = rm.GetString("lbDelete")
+        btnOk.Text = rm.GetString("lbOk")
+        lbUnits.Text = rm.GetString("lbUnit")
+        Me.Text = rm.GetString("lbAddUnits")
 
     End Sub
    
     Private Sub btnDelete_Click(sender As Object, e As EventArgs) Handles btnDelete.Click
         If ListBox1.SelectedItem IsNot Nothing Then
             'MsgBox(ListBox1.SelectedItem & vbNewLine & ListBox1.SelectedValue)
-            DatabaseHelper.cmd = New SqlCeCommand("select * from items WHERE unit = '" & ListBox1.SelectedItem.ToString & "'", DatabaseHelper.con)
-            Dim d As SqlCeDataReader = DatabaseHelper.cmd.ExecuteReader
+            cmd = New SqlCeCommand("select * from items WHERE unit = '" & ListBox1.SelectedItem.ToString & "'", con)
+            Dim d As SqlCeDataReader = cmd.ExecuteReader
             If Not d.Read() Then
-                DatabaseHelper.cmd = New SqlCeCommand("DELETE FROM units WHERE name = '" & ListBox1.SelectedItem.ToString & "'", DatabaseHelper.con)
-                If DatabaseHelper.con.State = ConnectionState.Closed Then DatabaseHelper.con.Open()
-                DatabaseHelper.cmd.ExecuteNonQuery()
+                cmd = New SqlCeCommand("DELETE FROM units WHERE name = '" & ListBox1.SelectedItem.ToString & "'", con)
+                If con.State = ConnectionState.Closed Then con.Open()
+                cmd.ExecuteNonQuery()
             Else
-                MsgBox(Globals.resManager.GetString("msgCategoryDelError"))
+                MsgBox(rm.GetString("msgCategoryDelError"))
 
             End If
             refreshListBox()
@@ -34,10 +34,10 @@ Public Class AddUnitsWindow
     End Sub
     Public Sub refreshListBox()
         ListBox1.Items.Clear()
-        DatabaseHelper.cmd = New SqlCeCommand("select name as c from units", DatabaseHelper.con)
-        If DatabaseHelper.con.State = ConnectionState.Closed Then DatabaseHelper.con.Open()
-        DatabaseHelper.cmd.ExecuteNonQuery()
-        Using rd As SqlCeDataReader = DatabaseHelper.cmd.ExecuteReader
+        cmd = New SqlCeCommand("select name as c from units", con)
+        If con.State = ConnectionState.Closed Then con.Open()
+        cmd.ExecuteNonQuery()
+        Using rd As SqlCeDataReader = cmd.ExecuteReader
             While rd.Read()
                 ListBox1.Items.Add(rd.GetValue(0))
             End While
@@ -46,14 +46,14 @@ Public Class AddUnitsWindow
 
     Private Sub btnAdd_Click(sender As Object, e As EventArgs) Handles btnAdd.Click
         If TextBox1.Text IsNot Nothing Then
-            DatabaseHelper.cmd = New SqlCeCommand("SELECT name FROM  units WHERE name = '" & TextBox1.Text & "';", DatabaseHelper.con)
-            If DatabaseHelper.con.State = ConnectionState.Closed Then DatabaseHelper.con.Open()
-            DatabaseHelper.cmd.ExecuteNonQuery()
-            Dim d As SqlCeDataReader = DatabaseHelper.cmd.ExecuteReader
+            cmd = New SqlCeCommand("SELECT name FROM  units WHERE name = '" & TextBox1.Text & "';", con)
+            If con.State = ConnectionState.Closed Then con.Open()
+            cmd.ExecuteNonQuery()
+            Dim d As SqlCeDataReader = cmd.ExecuteReader
             If Not d.Read() Then
-                DatabaseHelper.cmd = New SqlCeCommand("INSERT Units(name) values('" & TextBox1.Text & "');", DatabaseHelper.con)
-                If DatabaseHelper.con.State = ConnectionState.Closed Then DatabaseHelper.con.Open()
-                DatabaseHelper.cmd.ExecuteNonQuery()
+                cmd = New SqlCeCommand("INSERT Units(name) values('" & TextBox1.Text & "');", con)
+                If con.State = ConnectionState.Closed Then con.Open()
+                cmd.ExecuteNonQuery()
                 refreshListBox()
                 TextBox1.Text = ""
             End If

@@ -1,4 +1,4 @@
-﻿Imports SalesInvoice.Utils
+﻿Imports SalesInvoice.globalVars
 Imports System.Data.SqlServerCe
 Imports Spire.Doc
 Imports Spire.Doc.Documents
@@ -9,8 +9,8 @@ Public Class CustomReportGenerator
     Dim startDate As DateTime
     Dim endDate As DateTime
     Private Sub CustomReport_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Me.Text = Globals.resManager.GetString("lbGenerating")
-        lbGenerating.Text = Globals.resManager.GetString("lbGenerating")
+        Me.Text = rm.GetString("lbGenerating")
+        lbGenerating.Text = rm.GetString("lbGenerating")
         generatePDF()
         Me.Close()
     End Sub
@@ -39,33 +39,32 @@ Public Class CustomReportGenerator
         fPara.AppendField("number of pages", FieldType.FieldSectionPages)
         fPara.Format.HorizontalAlignment = HorizontalAlignment.Right
         Dim dbinfoFoo = foo.AddParagraph()
-        dbinfoFoo.AppendText("Dane z bazy: " & DatabaseHelper.currentDatabase).CharacterFormat.FontSize = 10
+        dbinfoFoo.AppendText("Dane z bazy: " & currentDatabase).CharacterFormat.FontSize = 10
         dbinfoFoo.Format.HorizontalAlignment = HorizontalAlignment.Left
 
 
         sellerinfo.Format.HorizontalAlignment = HorizontalAlignment.Left
-        sellerinfo.AppendText(Globals.appSettings.Settings.Item("headlineInfo").Value & vbNewLine).CharacterFormat.Bold = True
-        sellerinfo.AppendText(Globals.appSettings.Settings.Item("sellerName").Value & vbNewLine).CharacterFormat.Bold = True
-        sellerinfo.AppendText(Globals.appSettings.Settings.Item("address").Value & " " & Globals.appSettings.Settings.Item("buildingNo").Value & vbNewLine).CharacterFormat.Bold = True
-        sellerinfo.AppendText(Globals.appSettings.Settings.Item("postalCode").Value & " " & Globals.appSettings.Settings.Item("city").Value & vbNewLine).CharacterFormat.Bold = True
-        sellerinfo.AppendText("tel. " & Globals.appSettings.Settings.Item("phone").Value & vbNewLine).CharacterFormat.Bold = True
+        sellerinfo.AppendText(asSettings.Settings.Item("headlineInfo").Value & vbNewLine).CharacterFormat.Bold = True
+        sellerinfo.AppendText(asSettings.Settings.Item("sellerName").Value & vbNewLine).CharacterFormat.Bold = True
+        sellerinfo.AppendText(asSettings.Settings.Item("address").Value & " " & asSettings.Settings.Item("buildingNo").Value & vbNewLine).CharacterFormat.Bold = True
+        sellerinfo.AppendText(asSettings.Settings.Item("postalCode").Value & " " & asSettings.Settings.Item("city").Value & vbNewLine).CharacterFormat.Bold = True
+        sellerinfo.AppendText("tel. " & asSettings.Settings.Item("phone").Value & vbNewLine).CharacterFormat.Bold = True
 
         If Not Directory.Exists(Application.StartupPath & "/reports") Then
             Directory.CreateDirectory(Application.StartupPath & "/reports")
         End If
 
 
-        'replace to proper sql queries
 
         Select Case reportType
             Case "items"
                 hPara.AppendText("Ilościowy raport sprzedaży wg. towarów" & vbNewLine & "Stan na dzień: " & Date.Now.ToString("dd.MM.yyyy") & vbNewLine & vbNewLine).CharacterFormat.FontSize = 20
                 hPara.Format.HorizontalAlignment = HorizontalAlignment.Center
                 'cmd = New SqlCeCommand("SELECT items.name, SUM(receipts_data.amount) AS iSum, receipts.ddate FROM receipts_data INNER JOIN receipts ON receipts_data.receipt_id = receipts.receipt_id INNER JOIN items ON receipts_data.code = items.id GROUP BY items.name, receipts.ddate ORDER BY iSum DESC ", con)
-                DatabaseHelper.cmd = New SqlCeCommand("SELECT items.name, SUM(receipts_data.amount) AS iSum, receipts.ddate FROM receipts_data INNER JOIN receipts ON receipts_data.receipt_id = receipts.receipt_id INNER JOIN items ON receipts_data.code = items.id GROUP BY items.name, receipts.ddate ORDER BY receipts.ddate DESC", DatabaseHelper.con)
-                If DatabaseHelper.con.State = ConnectionState.Closed Then DatabaseHelper.con.Open()
-                DatabaseHelper.cmd.ExecuteNonQuery()
-                Using rd As SqlCeDataReader = DatabaseHelper.cmd.ExecuteReader
+                cmd = New SqlCeCommand("SELECT items.name, SUM(receipts_data.amount) AS iSum, receipts.ddate FROM receipts_data INNER JOIN receipts ON receipts_data.receipt_id = receipts.receipt_id INNER JOIN items ON receipts_data.code = items.id GROUP BY items.name, receipts.ddate ORDER BY receipts.ddate DESC", con)
+                If con.State = ConnectionState.Closed Then con.Open()
+                cmd.ExecuteNonQuery()
+                Using rd As SqlCeDataReader = cmd.ExecuteReader
                     While rd.Read()
                         If prevDate = "" And curDate = "" Then ' first item
                             prevDate = rd.GetValue(2)
@@ -91,7 +90,7 @@ Public Class CustomReportGenerator
                     Try
                         doc.SaveToFile("reports/report_items_" & Date.Now.ToString("dd.MM.yyyy") & ".pdf", FileFormat.PDF)
                     Catch ex As Exception
-                        MsgBox(Globals.resManager.GetString("msgFileError"))
+                        MsgBox(rm.GetString("msgFileError"))
                     End Try
                     repURI = "reports/report_items_" & Date.Now.ToString("dd.MM.yyyy") & ".pdf"
 
@@ -99,10 +98,10 @@ Public Class CustomReportGenerator
             Case "categories"
                 hPara.AppendText("Ilościowy raport sprzedaży wg. kategorii towarów" & vbNewLine & "Stan na dzień: " & Date.Now.ToString("dd.MM.yyyy") & vbNewLine & vbNewLine).CharacterFormat.FontSize = 20
                 hPara.Format.HorizontalAlignment = HorizontalAlignment.Center
-                DatabaseHelper.cmd = New SqlCeCommand("SELECT categories.name, SUM(receipts_data.code) AS Expr1, receipts.ddate FROM receipts INNER JOIN receipts_data ON receipts.receipt_id = receipts_data.receipt_id INNER JOIN items ON receipts_data.code = items.id INNER JOIN categories ON items.category = categories.id GROUP BY categories.name, receipts.ddate ORDER BY receipts.ddate DESC", DatabaseHelper.con)
-                If DatabaseHelper.con.State = ConnectionState.Closed Then DatabaseHelper.con.Open()
-                DatabaseHelper.cmd.ExecuteNonQuery()
-                Using rd As SqlCeDataReader = DatabaseHelper.cmd.ExecuteReader
+                cmd = New SqlCeCommand("SELECT categories.name, SUM(receipts_data.code) AS Expr1, receipts.ddate FROM receipts INNER JOIN receipts_data ON receipts.receipt_id = receipts_data.receipt_id INNER JOIN items ON receipts_data.code = items.id INNER JOIN categories ON items.category = categories.id GROUP BY categories.name, receipts.ddate ORDER BY receipts.ddate DESC", con)
+                If con.State = ConnectionState.Closed Then con.Open()
+                cmd.ExecuteNonQuery()
+                Using rd As SqlCeDataReader = cmd.ExecuteReader
                     While rd.Read()
                         If prevDate = "" And curDate = "" Then ' first item
                             prevDate = rd.GetValue(2)
@@ -129,7 +128,7 @@ Public Class CustomReportGenerator
                 Try
                     doc.SaveToFile("reports/report_categories_" & Date.Now.ToString("dd.MM.yyyy") & ".pdf", FileFormat.PDF)
                 Catch ex As Exception
-                    MsgBox(Globals.resManager.GetString("msgFileError"))
+                    MsgBox(rm.GetString("msgFileError"))
                 End Try
                 repURI = "reports/report_categories_" & Date.Now.ToString("dd.MM.yyyy") & ".pdf"
 
@@ -137,11 +136,11 @@ Public Class CustomReportGenerator
                 hPara.AppendText("Miesięczny raport sprzedaży towarów").CharacterFormat.FontSize = 20
                 hPara.AppendText((vbNewLine & "Stan na dzień: " & Date.Now.ToString("dd.MM.yyyy") & vbNewLine & vbNewLine)).CharacterFormat.FontSize = 15
                 hPara.Format.HorizontalAlignment = HorizontalAlignment.Center
-                DatabaseHelper.cmd = New SqlCeCommand("SELECT SUM(receipts_data.amount * items.price) AS iSum, receipts.ddate FROM receipts INNER JOIN receipts_data ON receipts.receipt_id = receipts_data.receipt_id INNER JOIN items ON receipts_data.code = items.id GROUP BY receipts.ddate ORDER BY receipts.ddate DESC", DatabaseHelper.con)
-                If DatabaseHelper.con.State = ConnectionState.Closed Then DatabaseHelper.con.Open()
-                DatabaseHelper.cmd.ExecuteNonQuery()
+                cmd = New SqlCeCommand("SELECT SUM(receipts_data.amount * items.price) AS iSum, receipts.ddate FROM receipts INNER JOIN receipts_data ON receipts.receipt_id = receipts_data.receipt_id INNER JOIN items ON receipts_data.code = items.id GROUP BY receipts.ddate ORDER BY receipts.ddate DESC", con)
+                If con.State = ConnectionState.Closed Then con.Open()
+                cmd.ExecuteNonQuery()
                 par = sec.AddParagraph()
-                Using rd As SqlCeDataReader = DatabaseHelper.cmd.ExecuteReader
+                Using rd As SqlCeDataReader = cmd.ExecuteReader
                     While rd.Read()
                         par.AppendHTML("<center><hr><center>")
                         par.AppendText(vbNewLine)
@@ -154,7 +153,7 @@ Public Class CustomReportGenerator
                 Try
                     doc.SaveToFile("reports/report_monthly_" & Date.Now.ToString("MM.yyyy") & ".pdf", FileFormat.PDF)
                 Catch ex As Exception
-                    MsgBox(Globals.resManager.GetString("msgFileError"))
+                    MsgBox(rm.GetString("msgFileError"))
                 End Try
                 repURI = "reports/report_monthly_" & Date.Now.ToString("MM.yyyy") & ".pdf"
 
@@ -165,11 +164,11 @@ Public Class CustomReportGenerator
                 hPara.AppendText((vbNewLine & "Stan na dzień: " & Date.Now.ToString("dd.MM.yyyy"))).CharacterFormat.FontSize = 15
                 hPara.AppendText((vbNewLine & "Dane z zakresu: " & startDate & " - " & endDate & vbNewLine & vbNewLine)).CharacterFormat.FontSize = 12
                 hPara.Format.HorizontalAlignment = HorizontalAlignment.Center
-                DatabaseHelper.cmd = New SqlCeCommand("SELECT SUM(receipts_data.amount * items.price) AS iSum, receipts.ddate FROM receipts INNER JOIN receipts_data ON receipts.receipt_id = receipts_data.receipt_id INNER JOIN items ON receipts_data.code = items.id WHERE receipts.ddate BETWEEN '" & startDate.ToString("MM/dd/yyyy").Replace("-", "/") & "' AND '" & endDate.ToString("MM/dd/yyyy").Replace("-", "/") & "' GROUP BY receipts.ddate ORDER BY receipts.ddate DESC", DatabaseHelper.con)
-                If DatabaseHelper.con.State = ConnectionState.Closed Then DatabaseHelper.con.Open()
-                DatabaseHelper.cmd.ExecuteNonQuery()
+                cmd = New SqlCeCommand("SELECT SUM(receipts_data.amount * items.price) AS iSum, receipts.ddate FROM receipts INNER JOIN receipts_data ON receipts.receipt_id = receipts_data.receipt_id INNER JOIN items ON receipts_data.code = items.id WHERE receipts.ddate BETWEEN '" & startDate.ToString("MM/dd/yyyy").Replace("-", "/") & "' AND '" & endDate.ToString("MM/dd/yyyy").Replace("-", "/") & "' GROUP BY receipts.ddate ORDER BY receipts.ddate DESC", con)
+                If con.State = ConnectionState.Closed Then con.Open()
+                cmd.ExecuteNonQuery()
                 par = sec.AddParagraph()
-                Using rd As SqlCeDataReader = DatabaseHelper.cmd.ExecuteReader
+                Using rd As SqlCeDataReader = cmd.ExecuteReader
                     While rd.Read()
                         par.AppendHTML("<center><hr><center>")
                         par.AppendText(vbNewLine)
@@ -181,11 +180,11 @@ Public Class CustomReportGenerator
                 Try
                     doc.SaveToFile("reports/report_custom_range_" & startDate & "-" & endDate & ".pdf", FileFormat.PDF)
                 Catch ex As Exception
-                    MsgBox(Globals.resManager.GetString("msgFileError"))
+                    MsgBox(rm.GetString("msgFileError"))
                 End Try
                 repURI = "reports/report_custom_range_" & startDate & "-" & endDate & ".pdf"
         End Select
-        DatabaseHelper.con.Close()
+        con.Close()
         Dim print As New PrintingWindow
         print.PdfViewer1.LoadFromFile((Application.StartupPath & "/" & repURI))
         print.ShowDialog()
