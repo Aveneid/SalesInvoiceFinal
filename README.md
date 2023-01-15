@@ -20,7 +20,7 @@ Aby skompilować aplikację na swojej maszynie i korzystać z jej całej funkcjo
 
 ## Rozwijanie aplikacji
 Każda osoba zainteresowana może rozwijać, zmieniać i edytować aplikację pod swoje indywidualne potrzeby, zachowując przy tym warunki licencji.
-W tym repozytorium znajdować się będzie wersja aplikacji, która została przedłożona w celach dyplomowania. Natomiast w repozytorium [SalesInvoice](https://github.com/Aveneid/SalesInvoice) znajdować się będzie aktualna i rozwijana wersja aplikacji. Wszystkie znalezione błędy proszę zgłaszać przy pomocy zakładki "Issues" w w/w repozytorium w celu ich weryfikacji i eliminacji.
+W tym repozytorium znajdować się będzie wersja aplikacji, która została przedłożona w celach dyplomowania. Natomiast w repozytorium [SalesInvoice](https://github.com/Aveneid/SalesInvoice) znajdować się będzie aktualna i rozwijana wersja aplikacji. Wszystkie znalezione błędy proszę zgłaszać przy pomocy zakładki "Issues" w celu ich weryfikacji i eliminacji.
 
 ## Licencja
 GNU GPL
